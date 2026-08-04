@@ -5,6 +5,7 @@
 Use an existing CUDA-enabled PyTorch installation with matching CUDA toolkit and a C++ compiler. A separate virtual environment can inherit the image's PyTorch without modifying another project:
 
 ```bash
+mkdir -p results
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 python -m pip install -r requirements-build.txt

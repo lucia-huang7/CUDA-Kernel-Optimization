@@ -1,0 +1,101 @@
+[1/3] c++ -MMD -MF bindings.o.d -DTORCH_EXTENSION_NAME=gpu_ops_cuda -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\"_gcc\" -DPYBIND11_STDLIB=\"_libstdcpp\" -DPYBIND11_BUILD_ABI=\"_cxxabi1018\" -isystem /usr/local/lib/python3.12/dist-packages/torch/include -isystem /usr/local/lib/python3.12/dist-packages/torch/include/torch/csrc/api/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 -fPIC -std=c++17 -O3 -c /workspace/gpu-kernel-lab/csrc/bindings.cpp -o bindings.o
+[2/3] /usr/local/cuda/bin/nvcc --generate-dependencies-with-compile --dependency-output kernels.cuda.o.d -DTORCH_EXTENSION_NAME=gpu_ops_cuda -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\"_gcc\" -DPYBIND11_STDLIB=\"_libstdcpp\" -DPYBIND11_BUILD_ABI=\"_cxxabi1018\" -isystem /usr/local/lib/python3.12/dist-packages/torch/include -isystem /usr/local/lib/python3.12/dist-packages/torch/include/torch/csrc/api/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -gencode=arch=compute_89,code=sm_89 --compiler-options '-fPIC' -O3 --fmad=false -lineinfo -std=c++17 -c /workspace/gpu-kernel-lab/csrc/kernels.cu -o kernels.cuda.o
+[3/3] c++ bindings.o kernels.cuda.o -shared -L/usr/local/lib/python3.12/dist-packages/torch/lib -lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda -ltorch -ltorch_python -L/usr/local/cuda/lib64 -lcudart -o gpu_ops_cuda.so
+{
+  "extension": "gpu_ops_cuda.so",
+  "load_seconds": 17.49483736604452,
+  "gpu": "NVIDIA L4",
+  "checks": [
+    {
+      "dtype": "torch.float32",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float32",
+      "count": 1,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float32",
+      "count": 255,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float32",
+      "count": 256,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float32",
+      "count": 257,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float32",
+      "count": 4097,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 1,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 255,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 256,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 257,
+      "passed": true
+    },
+    {
+      "dtype": "torch.float16",
+      "count": 4097,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 0,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 1,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 255,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 256,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 257,
+      "passed": true
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "count": 4097,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

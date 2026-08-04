@@ -2,6 +2,19 @@
 
 CUDA C++ operator development with PyTorch bindings, numerical tests and hardware profiling. The project covers normalization and matrix multiplication, with implementations and measurements added in stages.
 
+## Validation
+
+**NVIDIA L4 · PyTorch 2.8.0 · CUDA 12.8 · FP32 / FP16 / BF16**
+
+| Check | Result |
+|---|---:|
+| CUDA extension compile and first load | 17.49 s |
+| Python-to-CUDA smoke cases | 18 passed |
+| Correctness and execution-semantics tests | 51 passed |
+| Separate RMSNorm numerical cases | 96 passed |
+
+[Validation results](results/validation.md) · [Raw numerical evidence](results/rmsnorm-correctness.json)
+
 ## Implementation
 
 | Component | Source |
