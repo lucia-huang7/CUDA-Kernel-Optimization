@@ -1,7 +1,7 @@
 """Forward correctness, input contracts and CUDA execution semantics."""
 import pytest
 import torch
-from gpu_ops import add_scalar, rmsnorm, rmsnorm_warp
+from gpu_ops import add_scalar, rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector
 from reference.rmsnorm import rmsnorm_reference
 
 CUDA = pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA GPU required')
@@ -13,7 +13,8 @@ TOLERANCES = {
 }
 
 
-@pytest.fixture(params=[rmsnorm, rmsnorm_warp], ids=['shared', 'warp'])
+@pytest.fixture(params=[rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector],
+                ids=['shared', 'warp', 'cached', 'rows', 'vector'])
 def operation(request):
     return request.param
 
@@ -121,3 +122,24 @@ def test_graph_capture_and_updated_input(operation):
     x.normal_()
     graph.replay()
     torch.testing.assert_close(actual, rmsnorm_reference(x, w), **TOLERANCES[x.dtype])
+
+
+@CUDA
+@pytest.mark.cuda
+@pytest.mark.parametrize('dtype', DTYPES)
+@pytest.mark.parametrize('rows', [1, 3, 4, 5, 7, 9])
+def test_specialized_row_tails(operation, dtype, rows):
+    x = torch.randn(rows, 1536, device='cuda', dtype=dtype)
+    w = torch.randn(1536, device='cuda', dtype=dtype)
+    torch.testing.assert_close(operation(x, w), rmsnorm_reference(x, w), **TOLERANCES[dtype])
+
+
+@CUDA
+@pytest.mark.cuda
+@pytest.mark.parametrize('dtype', DTYPES)
+def test_offset_contiguous_storage(operation, dtype):
+    x = torch.randn(8 * 1536 + 1, device='cuda', dtype=dtype)[1:].reshape(8, 1536)
+    w = torch.randn(1537, device='cuda', dtype=dtype)[1:]
+    assert x.is_contiguous() and w.is_contiguous()
+    assert x.data_ptr() % 16 != 0 and w.data_ptr() % 16 != 0
+    torch.testing.assert_close(operation(x, w), rmsnorm_reference(x, w), **TOLERANCES[dtype])

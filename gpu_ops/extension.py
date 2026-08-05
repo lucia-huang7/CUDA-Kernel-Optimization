@@ -13,7 +13,8 @@ def load_extension():
     os.environ.setdefault("MAX_JOBS", "2")
     return load(
         name="gpu_ops_cuda",
-        sources=[str(root / "csrc/bindings.cpp"), str(root / "csrc/kernels.cu")],
+        sources=[str(root / "csrc/bindings.cpp"), str(root / "csrc/kernels.cu"),
+                 str(root / "csrc/rmsnorm_specialized.cu")],
         extra_cflags=["-O3"],
         extra_cuda_cflags=["-O3", "--fmad=false", "-lineinfo"],
         build_directory=str(build),

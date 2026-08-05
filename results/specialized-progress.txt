@@ -1,0 +1,6 @@
+Rows 1 {'pytorch_eager': 10.203, 'cuda_shared': 3.187, 'cuda_warp': 3.017, 'cuda_cached': 2.087, 'cuda_rows': 8.022, 'cuda_vector': 2.281, 'pytorch_compiled': 1.433}
+Rows 8 {'pytorch_eager': 11.976, 'cuda_shared': 3.276, 'cuda_warp': 3.108, 'cuda_cached': 2.137, 'cuda_rows': 8.109, 'cuda_vector': 2.47, 'pytorch_compiled': 1.448}
+Rows 32 {'pytorch_eager': 13.412, 'cuda_shared': 3.306, 'cuda_warp': 3.146, 'cuda_cached': 2.166, 'cuda_rows': 8.47, 'cuda_vector': 2.565, 'pytorch_compiled': 1.565}
+Rows 128 {'pytorch_eager': 15.395, 'cuda_shared': 3.622, 'cuda_warp': 3.307, 'cuda_cached': 2.398, 'cuda_rows': 8.582, 'cuda_vector': 2.655, 'pytorch_compiled': 1.89}
+Rows 512 {'pytorch_eager': 29.902, 'cuda_shared': 7.337, 'cuda_warp': 6.465, 'cuda_cached': 4.47, 'cuda_rows': 9.187, 'cuda_vector': 4.169, 'pytorch_compiled': 4.458}
+Rows 2048 {'pytorch_eager': 127.964, 'cuda_shared': 28.406, 'cuda_warp': 24.827, 'cuda_cached': 14.833, 'cuda_rows': 23.59, 'cuda_vector': 15.132, 'pytorch_compiled': 19.515}

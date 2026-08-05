@@ -6,3 +6,5 @@ __pycache__/
 *.log
 *.trace.json
 *.ncu-rep
+.inductor-inspection/
+.compile-debug/

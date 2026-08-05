@@ -42,11 +42,14 @@ def run(args):
     if args.include_warp:
         from gpu_ops import rmsnorm_warp
         methods['cuda_warp'] = rmsnorm_warp
+    if args.include_specialized:
+        from gpu_ops import rmsnorm_cached, rmsnorm_rows, rmsnorm_vector
+        methods.update(cuda_cached=rmsnorm_cached, cuda_rows=rmsnorm_rows, cuda_vector=rmsnorm_vector)
     if args.include_compiled:
         methods['pytorch_compiled'] = torch.compile(rmsnorm_reference, fullgraph=True, dynamic=False)
     root = Path(__file__).resolve().parents[1]
     sources = ['csrc/kernels.cu', 'csrc/bindings.cpp', 'gpu_ops/ops.py', 'gpu_ops/extension.py',
-               'reference/rmsnorm.py', 'scripts/benchmark_rmsnorm.py']
+               'reference/rmsnorm.py', 'scripts/benchmark_rmsnorm.py', 'csrc/rmsnorm_specialized.cu']
     payload = {'environment': collect_environment(), 'seed': 20261015,
                'iterations_per_replay': args.iterations, 'repeats': args.repeats,
                'measurement': 'CUDA event timing of a captured repeated sequence; compilation and Python launch excluded',
@@ -110,6 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('--repeats', type=int, default=30)
     parser.add_argument('--include-warp', action='store_true')
     parser.add_argument('--include-compiled', action='store_true')
+    parser.add_argument('--include-specialized', action='store_true')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
     if args.iterations < 1 or args.repeats < 2 or any(r < 1 for r in args.rows):
