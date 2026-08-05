@@ -34,3 +34,19 @@ The reference matches Qwen2: accumulate squared inputs in FP32, normalize in FP3
 ## Next stages
 
 Profile normalization, tune access/reduction strategy, add LayerNorm and implement GEMM baselines with shared-memory/register tiling. Kernel speedups and model-level impact require separate measurements.
+
+## Reduction experiment
+
+The baseline entry point remains `gpu_ops.rmsnorm`; `gpu_ops.rmsnorm_warp` selects the optimized reduction. Keep both available for regression and timing comparisons.
+
+```bash
+python -m scripts.benchmark_rmsnorm --include-warp --include-compiled --output results/new-comparison.json
+python -m scripts.validate_rmsnorm --output results/new-correctness.json
+python -m scripts.inspect_cuda_binary
+```
+
+Choose new output paths for each run. The committed report generator reads the named historical comparison files, preserving the original dataset. Static disassembly/resource records require `cuobjdump` and the built shared library.
+
+The timing runner captures separate CUDA Graph sequences for each method, randomizes method order across 30 repetitions and also saves ordinary Python-call wall timing. Profiling is separate. The recorded NCU attempt failed with `ERR_NVGPUCTRPERM`; no hardware-counter utilization claim is made. No host-driver permissions were changed.
+
+The plotting script uses saved timing data. Install `requirements-figures.txt` in a plotting environment and run `python scripts/plot_rmsnorm.py`. The figure uses DejaVu Sans plot text, Times New Roman captions and outlined SVG glyphs.

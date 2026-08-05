@@ -1,0 +1,6 @@
+Rows 1 {'pytorch_eager': 10.197, 'cuda_shared': 3.183, 'cuda_warp': 3.012, 'pytorch_compiled': 1.432}
+Rows 8 {'pytorch_eager': 11.925, 'cuda_shared': 3.268, 'cuda_warp': 3.097, 'pytorch_compiled': 1.46}
+Rows 32 {'pytorch_eager': 13.391, 'cuda_shared': 3.304, 'cuda_warp': 3.14, 'pytorch_compiled': 1.564}
+Rows 128 {'pytorch_eager': 15.375, 'cuda_shared': 3.616, 'cuda_warp': 3.288, 'pytorch_compiled': 1.897}
+Rows 512 {'pytorch_eager': 30.805, 'cuda_shared': 7.528, 'cuda_warp': 6.587, 'pytorch_compiled': 4.641}
+Rows 2048 {'pytorch_eager': 130.632, 'cuda_shared': 29.852, 'cuda_warp': 25.579, 'pytorch_compiled': 20.631}

@@ -1,0 +1,12 @@
+{
+  "source_sha256": "7ca11a185e9d3e04bec04812595549d60d25cef9a11417b9ec8112a5e5fb96cc",
+  "fonts": {
+    "plot": "DejaVu Sans",
+    "captions": "Times New Roman",
+    "svg": "outlined"
+  },
+  "outputs": {
+    "rmsnorm_reduction_v1.svg": "85458c4507078f6e267e62cd291d2881084d050ac09e596bb962642313a401f8",
+    "rmsnorm_reduction_v1.png": "921df7bd8397423c8fb9c8d1c30438a62f6eec090364b64a735e309bf9f520af"
+  }
+}
