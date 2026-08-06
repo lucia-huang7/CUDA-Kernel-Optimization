@@ -43,10 +43,16 @@ def run(args):
         from gpu_ops import rmsnorm_warp
         methods['cuda_warp'] = rmsnorm_warp
     if args.include_specialized:
-        from gpu_ops import rmsnorm_cached, rmsnorm_rows, rmsnorm_vector
-        methods.update(cuda_cached=rmsnorm_cached, cuda_rows=rmsnorm_rows, cuda_vector=rmsnorm_vector)
+        from gpu_ops import rmsnorm_cached, rmsnorm_rows, rmsnorm_vector, rmsnorm_reload, rmsnorm_vector128
+        methods.update(cuda_cached=rmsnorm_cached, cuda_rows=rmsnorm_rows, cuda_vector=rmsnorm_vector,
+                       cuda_reload=rmsnorm_reload, cuda_vector128=rmsnorm_vector128)
     if args.include_compiled:
         methods['pytorch_compiled'] = torch.compile(rmsnorm_reference, fullgraph=True, dynamic=False)
+    if args.methods:
+        unknown = set(args.methods) - methods.keys()
+        if unknown:
+            raise SystemExit(f"Unknown methods: {unknown}")
+        methods = {name: methods[name] for name in args.methods}
     root = Path(__file__).resolve().parents[1]
     sources = ['csrc/kernels.cu', 'csrc/bindings.cpp', 'gpu_ops/ops.py', 'gpu_ops/extension.py',
                'reference/rmsnorm.py', 'scripts/benchmark_rmsnorm.py', 'csrc/rmsnorm_specialized.cu']
@@ -114,6 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('--include-warp', action='store_true')
     parser.add_argument('--include-compiled', action='store_true')
     parser.add_argument('--include-specialized', action='store_true')
+    parser.add_argument('--methods', nargs='+')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
     if args.iterations < 1 or args.repeats < 2 or any(r < 1 for r in args.rows):

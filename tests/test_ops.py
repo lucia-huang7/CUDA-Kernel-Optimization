@@ -1,7 +1,7 @@
 """Forward correctness, input contracts and CUDA execution semantics."""
 import pytest
 import torch
-from gpu_ops import add_scalar, rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector
+from gpu_ops import add_scalar, rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector, rmsnorm_reload, rmsnorm_vector128
 from reference.rmsnorm import rmsnorm_reference
 
 CUDA = pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA GPU required')
@@ -13,8 +13,8 @@ TOLERANCES = {
 }
 
 
-@pytest.fixture(params=[rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector],
-                ids=['shared', 'warp', 'cached', 'rows', 'vector'])
+@pytest.fixture(params=[rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector, rmsnorm_reload, rmsnorm_vector128],
+                ids=['shared', 'warp', 'cached', 'rows', 'vector', 'reload', 'vector128'])
 def operation(request):
     return request.param
 

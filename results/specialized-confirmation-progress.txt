@@ -1,0 +1,6 @@
+Rows 1 {'cuda_warp': 3.009, 'cuda_cached': 2.075, 'cuda_vector128': 1.674, 'pytorch_compiled': 1.426}
+Rows 8 {'cuda_warp': 3.104, 'cuda_cached': 2.132, 'cuda_vector128': 1.717, 'pytorch_compiled': 1.444}
+Rows 32 {'cuda_warp': 3.137, 'cuda_cached': 2.167, 'cuda_vector128': 1.821, 'pytorch_compiled': 1.556}
+Rows 128 {'cuda_warp': 3.309, 'cuda_cached': 2.373, 'cuda_vector128': 2.07, 'pytorch_compiled': 1.897}
+Rows 512 {'cuda_warp': 6.303, 'cuda_cached': 4.323, 'cuda_vector128': 3.044, 'pytorch_compiled': 4.293}
+Rows 2048 {'cuda_warp': 22.379, 'cuda_cached': 13.398, 'cuda_vector128': 9.359, 'pytorch_compiled': 17.905}

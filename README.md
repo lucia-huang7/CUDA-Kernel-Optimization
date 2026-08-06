@@ -10,10 +10,25 @@ CUDA C++ operator development with PyTorch bindings, numerical tests and hardwar
 |---|---:|
 | CUDA extension compile and first load | 17.49 s |
 | Python-to-CUDA smoke cases | 18 passed |
-| Correctness and execution-semantics tests, both variants | 98 passed |
-| Separate RMSNorm numerical cases, both variants | 192 passed |
+| Correctness and execution-semantics tests, seven variants | 480 passed |
+| Separate RMSNorm numerical cases, seven variants | 924 passed |
 
-[Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-warp-correctness.json)
+[Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json)
+
+## Width-1536 RMSNorm specialization
+
+Register reuse, fixed-width unrolling and a 128-thread vectorized row layout reduce GPU replay latency by **37.4%–58.2%** on the six confirmation shapes versus the previous warp kernel. At 2048 rows, the new kernel reaches **9.359 μs**, compared with **17.905 μs** for PyTorch compiled.
+
+![Specialized RMSNorm performance](assets/figures/rmsnorm_specialized_v1.png)
+
+| Rows | Previous CUDA | Vector 128 | PyTorch compiled |
+|---:|---:|---:|---:|
+| 1 | 3.009 μs | 1.674 μs | 1.426 μs |
+| 128 | 3.309 μs | 2.070 μs | 1.897 μs |
+| 512 | 6.303 μs | 3.044 μs | 4.293 μs |
+| 2048 | 22.379 μs | 9.359 μs | 17.905 μs |
+
+BF16, width 1536; median of 30 interleaved repeats with 100 calls per replay. A fresh-process confirmation and five additional row counts accompany the candidate ablations. [Full experiment](results/rmsnorm-specialized.md).
 
 ## RMSNorm reduction optimization
 
@@ -38,6 +53,7 @@ Median of 30 interleaved repeats, each replaying 100 calls. The chart includes t
 | Extension loader | [gpu_ops/extension.py](gpu_ops/extension.py) |
 | Pybind interface | [csrc/bindings.cpp](csrc/bindings.cpp) |
 | CUDA kernels and launch wrappers | [csrc/kernels.cu](csrc/kernels.cu) |
+| Fixed-width caching and vector layouts | [csrc/rmsnorm_specialized.cu](csrc/rmsnorm_specialized.cu) |
 | RMSNorm reference | [reference/rmsnorm.py](reference/rmsnorm.py) |
 
-Both RMSNorm variants use one 256-thread block per row, FP32 reduction and Qwen2-compatible cast order. It supports contiguous two-dimensional FP32, FP16 and BF16 tensors. [Development workflow](docs/DEVELOPMENT.md).
+All RMSNorm variants use FP32 reduction and Qwen2-compatible cast order. The width-1536 vector path uses 128 threads per row; other widths keep the general warp fallback. It supports contiguous two-dimensional FP32, FP16 and BF16 tensors. [Development workflow](docs/DEVELOPMENT.md).

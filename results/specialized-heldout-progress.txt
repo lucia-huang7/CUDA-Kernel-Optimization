@@ -1,0 +1,5 @@
+Rows 2 {'cuda_warp': 3.008, 'cuda_vector128': 1.669, 'pytorch_compiled': 1.414}
+Rows 16 {'cuda_warp': 3.11, 'cuda_vector128': 1.731, 'pytorch_compiled': 1.477}
+Rows 64 {'cuda_warp': 3.207, 'cuda_vector128': 1.961, 'pytorch_compiled': 1.692}
+Rows 256 {'cuda_warp': 3.565, 'cuda_vector128': 2.357, 'pytorch_compiled': 2.804}
+Rows 1024 {'cuda_warp': 10.693, 'cuda_vector128': 5.229, 'pytorch_compiled': 8.243}

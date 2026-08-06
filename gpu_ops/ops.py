@@ -24,3 +24,11 @@ def rmsnorm_rows(x, weight, eps=1e-6):
 
 def rmsnorm_vector(x, weight, eps=1e-6):
     return load_extension().rmsnorm_vector(x, weight, eps)
+
+
+def rmsnorm_reload(x, weight, eps=1e-6):
+    return load_extension().rmsnorm_reload(x, weight, eps)
+
+
+def rmsnorm_vector128(x, weight, eps=1e-6):
+    return load_extension().rmsnorm_vector128(x, weight, eps)

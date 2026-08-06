@@ -50,3 +50,21 @@ Choose new output paths for each run. The committed report generator reads the n
 The timing runner captures separate CUDA Graph sequences for each method, randomizes method order across 30 repetitions and also saves ordinary Python-call wall timing. Profiling is separate. The recorded NCU attempt failed with `ERR_NVGPUCTRPERM`; no hardware-counter utilization claim is made. No host-driver permissions were changed.
 
 The plotting script uses saved timing data. Install `requirements-figures.txt` in a plotting environment and run `python scripts/plot_rmsnorm.py`. The figure uses DejaVu Sans plot text, Times New Roman captions and outlined SVG glyphs.
+
+## Fixed-width layout experiment
+
+`rmsnorm_vector128` is a width-1536 specialization with four-element packs and 128 threads per row. BF16/FP16 packs require 8-byte alignment, FP32 packs require 16-byte alignment. Misaligned contiguous storage uses `rmsnorm_cached`; other widths use the general `rmsnorm_warp` implementation. All variants remain separately callable for ablation.
+
+```bash
+python -m scripts.benchmark_rmsnorm --include-warp --include-specialized --include-compiled --methods cuda_warp cuda_vector128 pytorch_compiled --output results/new-specialized-run.json
+python -m scripts.validate_rmsnorm --output results/new-specialized-correctness.json
+python -m scripts.inspect_specialized_binary
+```
+
+Select fresh result paths. `report_specialized_rmsnorm.py` and `plot_specialized_rmsnorm.py` use the committed historical filenames. The first tuning snapshot and later control/confirmation snapshots correspond to different source revisions, recorded by their hashes.
+
+Generated Inductor inspection is read-only. Static binary evidence confirms wide loads/stores and no local-memory instruction sites in the selected compiled kernels; it does not establish achieved memory throughput.
+
+Compute Sanitizer returned a cuKernelGetFunction invalid-handle API diagnostic on both the new workload and the original add-scalar extension, while the PyTorch-only control was clean. The issue remains unresolved and is not reported as a clean memcheck pass. No API errors were suppressed.
+
+Reference: [CUDA 12.8 size and alignment requirements](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-c-programming-guide/index.html#device-memory-accesses).

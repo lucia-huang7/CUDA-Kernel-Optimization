@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import torch
-from gpu_ops import rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector
+from gpu_ops import rmsnorm, rmsnorm_warp, rmsnorm_cached, rmsnorm_rows, rmsnorm_vector, rmsnorm_reload, rmsnorm_vector128
 from reference.rmsnorm import rmsnorm_reference
 
 TOLERANCES = {
@@ -26,7 +26,7 @@ def run(output):
                 x = torch.randn(rows, width, device='cuda', dtype=dtype) * scale
                 weight = torch.randn(width, device='cuda', dtype=dtype)
                 expected = rmsnorm_reference(x, weight)
-                for variant, operation in [('shared', rmsnorm), ('warp', rmsnorm_warp), ('cached', rmsnorm_cached), ('rows', rmsnorm_rows), ('vector', rmsnorm_vector)]:
+                for variant, operation in [('shared', rmsnorm), ('warp', rmsnorm_warp), ('cached', rmsnorm_cached), ('rows', rmsnorm_rows), ('vector', rmsnorm_vector), ('reload', rmsnorm_reload), ('vector128', rmsnorm_vector128)]:
                     actual = operation(x, weight)
                     torch.testing.assert_close(actual, expected, **tolerance)
                     errors = (actual.float() - expected.float()).abs()
@@ -47,5 +47,5 @@ def run(output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", default="results/rmsnorm-specialized-correctness.json")
+    parser.add_argument("--output", default="results/rmsnorm-specialized-final-correctness.json")
     run(parser.parse_args().output)
