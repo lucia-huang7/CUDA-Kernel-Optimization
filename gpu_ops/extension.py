@@ -20,3 +20,12 @@ def load_extension():
         build_directory=str(build),
         verbose=os.environ.get("GPU_OPS_BUILD_VERBOSE", "0") == "1",
     )
+
+
+def initialize():
+    """Load native kernels during startup, before the first CUDA tensor operation.
+
+    Explicit startup loading avoids the late-load cuKernelGetFunction diagnostic
+    observed with CUDA 12.8 on the recorded L4 environment. No kernel is launched.
+    """
+    load_extension()

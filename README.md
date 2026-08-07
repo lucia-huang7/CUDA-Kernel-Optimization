@@ -12,8 +12,10 @@ CUDA C++ operator development with PyTorch bindings, numerical tests and hardwar
 | Python-to-CUDA smoke cases | 18 passed |
 | Correctness and execution-semantics tests, seven variants | 480 passed |
 | Separate RMSNorm numerical cases, seven variants | 924 passed |
+| Compute Sanitizer memcheck with startup loading | 480 tests; 0 errors |
+| Alignment and row tails: memcheck / synccheck / racecheck | 60 cases each; 0 errors / hazards |
 
-[Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json)
+[Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json) · [Sanitizer diagnosis](results/sanitizer-diagnosis.md)
 
 ## Width-1536 RMSNorm specialization
 

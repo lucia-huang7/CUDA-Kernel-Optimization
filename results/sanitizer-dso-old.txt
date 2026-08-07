@@ -1,0 +1,3 @@
+========= COMPUTE-SANITIZER
+DSO_PASSED
+========= ERROR SUMMARY: 0 errors

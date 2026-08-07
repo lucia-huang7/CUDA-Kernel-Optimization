@@ -92,6 +92,6 @@ The optimization targets width 1536. Other widths retain the tested fallback; th
 
 ## Sanitizer diagnostics
 
-The 60 alignment/tail comparisons completed, but Compute Sanitizer reported a CUDA_ERROR_INVALID_HANDLE at cuKernelGetFunction. Eager module loading did not remove the diagnostic. This is retained as an unresolved instrumentation/API result, not a clean memcheck pass.
+Explicit startup loading resolves the recorded initialization-order diagnostic in the sanitizer workflow. The L4 memcheck run passes all 480 tests and the 60 alignment/tail comparisons with zero errors. Historical late-load failures remain available.
 
-The original add-scalar extension reproduced the same cuKernelGetFunction diagnostic; a PyTorch-only control completed with zero errors. This narrows the issue to the extension/tool/runtime path without proving a root cause. See the separate control logs and exit files. Numerical/stream/graph validation and timing conclusions are separate from this unresolved sanitizer check.
+See [initialization-order diagnosis](sanitizer-diagnosis.md) for the controlled reproducer, numerical checks and negative control. No CUDA kernel or API-error reporting mode was changed.

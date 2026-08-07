@@ -8,3 +8,4 @@ __pycache__/
 *.ncu-rep
 .inductor-inspection/
 .compile-debug/
+.diagnostics/

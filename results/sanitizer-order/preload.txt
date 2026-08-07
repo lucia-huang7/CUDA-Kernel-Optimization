@@ -1,0 +1,3 @@
+========= COMPUTE-SANITIZER
+APPLICATION_PASSED
+========= ERROR SUMMARY: 0 errors

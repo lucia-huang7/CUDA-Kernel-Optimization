@@ -65,6 +65,22 @@ Select fresh result paths. `report_specialized_rmsnorm.py` and `plot_specialized
 
 Generated Inductor inspection is read-only. Static binary evidence confirms wide loads/stores and no local-memory instruction sites in the selected compiled kernels; it does not establish achieved memory throughput.
 
-Compute Sanitizer returned a cuKernelGetFunction invalid-handle API diagnostic on both the new workload and the original add-scalar extension, while the PyTorch-only control was clean. The issue remains unresolved and is not reported as a clean memcheck pass. No API errors were suppressed.
+The recorded CUDA 12.8 environment reports a `cuKernelGetFunction` invalid-handle diagnostic when the extension is loaded after a PyTorch CUDA kernel has run. Load native kernels during application startup, before CUDA tensor operations:
+
+```python
+from gpu_ops import initialize
+initialize()
+```
+
+The sanitizer workload runner uses this order without launching a warm-up kernel or changing API error reporting:
+
+```bash
+compute-sanitizer --tool memcheck --error-exitcode 99 python -m scripts.sanitizer_workload pytest
+compute-sanitizer --tool memcheck --error-exitcode 99 python -m scripts.sanitizer_workload alignment
+compute-sanitizer --tool memcheck --error-exitcode 99 python -m scripts.sanitizer_workload numerical --output results/new-sanitizer-correctness.json
+compute-sanitizer --tool synccheck --error-exitcode 99 python -m scripts.sanitizer_workload alignment
+```
+
+[Initialization-order diagnosis and L4 verification](../results/sanitizer-diagnosis.md) includes the failing controls, a clean-build comparison and a deliberate out-of-bounds negative control. Historical failure logs remain unchanged. The startup-loading workaround does not claim a vendor-internal driver/runtime fix.
 
 Reference: [CUDA 12.8 size and alignment requirements](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-c-programming-guide/index.html#device-memory-accesses).
