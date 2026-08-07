@@ -32,3 +32,7 @@ def rmsnorm_reload(x, weight, eps=1e-6):
 
 def rmsnorm_vector128(x, weight, eps=1e-6):
     return load_extension().rmsnorm_vector128(x, weight, eps)
+
+
+def layernorm(x, weight, bias, eps=1e-5):
+    return load_extension().layernorm(x, weight, bias, eps)

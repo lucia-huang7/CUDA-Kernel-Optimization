@@ -12,7 +12,11 @@ at::Tensor rmsnorm_vector_cuda(const at::Tensor&, const at::Tensor&, double);
 at::Tensor rmsnorm_reload_cuda(const at::Tensor&, const at::Tensor&, double);
 at::Tensor rmsnorm_vector128_cuda(const at::Tensor&, const at::Tensor&, double);
 
+at::Tensor layernorm_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&, double);
+
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+  module.def("layernorm", &layernorm_cuda, "Forward-only affine LayerNorm",
+             pybind11::arg("input"), pybind11::arg("weight"), pybind11::arg("bias"), pybind11::arg("eps") = 1e-5);
   module.def("add_scalar", &add_scalar_cuda, "Add a scalar on the current CUDA stream",
              pybind11::arg("input"), pybind11::arg("value") = 1.0);
   module.def("rmsnorm", &rmsnorm_cuda, "Forward-only row-wise RMSNorm",

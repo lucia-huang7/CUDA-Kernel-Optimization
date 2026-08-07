@@ -14,7 +14,7 @@ def load_extension():
     return load(
         name="gpu_ops_cuda",
         sources=[str(root / "csrc/bindings.cpp"), str(root / "csrc/kernels.cu"),
-                 str(root / "csrc/rmsnorm_specialized.cu")],
+                 str(root / "csrc/rmsnorm_specialized.cu"), str(root / "csrc/layernorm.cu")],
         extra_cflags=["-O3"],
         extra_cuda_cflags=["-O3", "--fmad=false", "-lineinfo"],
         build_directory=str(build),
