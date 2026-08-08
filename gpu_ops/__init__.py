@@ -8,3 +8,6 @@ __all__.append("layernorm")
 
 from .ops import layernorm_warp, layernorm_cached, layernorm_vector
 __all__ += ["layernorm_warp", "layernorm_cached", "layernorm_vector"]
+
+from .ops import gemm_naive, gemm_cublas
+__all__ += ["gemm_naive", "gemm_cublas"]

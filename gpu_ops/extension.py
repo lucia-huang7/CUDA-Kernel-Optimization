@@ -14,8 +14,9 @@ def load_extension():
     return load(
         name="gpu_ops_cuda",
         sources=[str(root / "csrc/bindings.cpp"), str(root / "csrc/kernels.cu"),
-                 str(root / "csrc/rmsnorm_specialized.cu"), str(root / "csrc/layernorm.cu")],
+                 str(root / "csrc/rmsnorm_specialized.cu"), str(root / "csrc/layernorm.cu"), str(root / "csrc/gemm.cu")],
         extra_cflags=["-O3"],
+        extra_ldflags=["-lcublas"],
         extra_cuda_cflags=["-O3", "--fmad=false", "-lineinfo"],
         build_directory=str(build),
         verbose=os.environ.get("GPU_OPS_BUILD_VERBOSE", "0") == "1",

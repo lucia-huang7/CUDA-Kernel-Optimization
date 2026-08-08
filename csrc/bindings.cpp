@@ -18,7 +18,12 @@ at::Tensor layernorm_warp_cuda(const at::Tensor&, const at::Tensor&, const at::T
 at::Tensor layernorm_cached_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&, double);
 at::Tensor layernorm_vector_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&, double);
 
+at::Tensor gemm_naive_cuda(const at::Tensor&, const at::Tensor&);
+at::Tensor gemm_cublas_cuda(const at::Tensor&, const at::Tensor&);
+
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+  module.def("gemm_naive", &gemm_naive_cuda, "FP32 row-major GEMM baseline");
+  module.def("gemm_cublas", &gemm_cublas_cuda, "FP32 pedantic cuBLAS GEMM control");
   module.def("layernorm_warp", &layernorm_warp_cuda, "Forward-only LayerNorm warp variant",
              pybind11::arg("input"), pybind11::arg("weight"), pybind11::arg("bias"), pybind11::arg("eps") = 1e-5);
   module.def("layernorm_cached", &layernorm_cached_cuda, "Forward-only LayerNorm cached variant",

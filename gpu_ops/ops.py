@@ -48,3 +48,11 @@ def layernorm_cached(x, weight, bias, eps=1e-5):
 
 def layernorm_vector(x, weight, bias, eps=1e-5):
     return load_extension().layernorm_vector(x, weight, bias, eps)
+
+
+def gemm_naive(a, b):
+    return load_extension().gemm_naive(a, b)
+
+
+def gemm_cublas(a, b):
+    return load_extension().gemm_cublas(a, b)
