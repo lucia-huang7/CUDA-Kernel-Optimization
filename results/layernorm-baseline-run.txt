@@ -1,0 +1,6 @@
+1 1536 {'pytorch_eager': 18.418, 'pytorch_native': 3.124, 'cuda_shared': 3.57, 'pytorch_compiled': 1.759}
+8 1536 {'pytorch_eager': 20.96, 'pytorch_native': 3.18, 'cuda_shared': 3.667, 'pytorch_compiled': 1.806}
+32 1536 {'pytorch_eager': 23.546, 'pytorch_native': 3.296, 'cuda_shared': 3.686, 'pytorch_compiled': 1.946}
+128 1536 {'pytorch_eager': 27.342, 'pytorch_native': 3.617, 'cuda_shared': 4.288, 'pytorch_compiled': 2.66}
+512 1536 {'pytorch_eager': 50.435, 'pytorch_native': 5.712, 'cuda_shared': 9.807, 'pytorch_compiled': 7.178}
+2048 1536 {'pytorch_eager': 234.329, 'pytorch_native': 23.539, 'cuda_shared': 47.695, 'pytorch_compiled': 34.768}

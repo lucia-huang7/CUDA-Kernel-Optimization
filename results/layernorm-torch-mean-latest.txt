@@ -1,0 +1,6 @@
+========= COMPUTE-SANITIZER
+========= Error: Race reported between Read access at void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<double, at::native::MeanOps<double, double, double, double>, unsigned int, double, (int)4, (int)4>>(T3)+0x9080
+=========     and Write access at void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<double, at::native::MeanOps<double, double, double, double>, unsigned int, double, (int)4, (int)4>>(T3)+0x9170 [3584 hazards]
+=========
+PYTORCH_FP64_MEAN_NUMERICAL_CHECK_PASSED
+========= RACECHECK SUMMARY: 1 hazard displayed (1 error, 0 warnings)

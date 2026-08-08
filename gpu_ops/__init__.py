@@ -5,3 +5,6 @@ __all__ = ["initialize", "add_scalar", "rmsnorm", "rmsnorm_warp", "rmsnorm_cache
 
 from .ops import layernorm
 __all__.append("layernorm")
+
+from .ops import layernorm_warp, layernorm_cached, layernorm_vector
+__all__ += ["layernorm_warp", "layernorm_cached", "layernorm_vector"]

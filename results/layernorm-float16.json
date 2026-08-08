@@ -1,0 +1,1137 @@
+{
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.8.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true,
+    "cxx11_abi": true,
+    "tools": {
+      "nvcc": {
+        "available": true,
+        "version": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0"
+      },
+      "g++": {
+        "available": true,
+        "version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+      },
+      "ninja": {
+        "available": true,
+        "version": "1.13.0.git.kitware.jobserver-pipe-1"
+      },
+      "ncu": {
+        "available": true,
+        "version": "NVIDIA (R) Nsight Compute Command Line Profiler\nCopyright (c) 2018-2025 NVIDIA Corporation\nVersion 2025.1.1.0 (build 35528883) (public-release)"
+      },
+      "nsys": {
+        "available": false
+      }
+    },
+    "gpu": {
+      "name": "NVIDIA L4",
+      "memory_bytes": 23661248512,
+      "compute_capability": [
+        8,
+        9
+      ]
+    }
+  },
+  "seed": 20261016,
+  "iterations": 100,
+  "repeats": 30,
+  "measurement": "CUDA event timing of repeated CUDA Graph calls; compile/dispatch excluded",
+  "cache_regime": "Repeated fixed input and affine buffers, warm cache",
+  "wall_measurement": "Three synchronized interleaved Python loops, including output allocation",
+  "source_hashes": {
+    "csrc/layernorm.cu": "c2b22120ac84d4db1effd77ee17b18b6fed8947138ce5267403874f55ac3c077",
+    "csrc/bindings.cpp": "e672efc927a20f654387f0b8b87ff2c1f154a4a61927722e8bc857e6a23d97b6",
+    "gpu_ops/extension.py": "eb689ee286d3b241e845e7cd267490d7631225ea723c660e558b6d6f18a63b1d",
+    "gpu_ops/ops.py": "24f32cbab3113862eb592c21bb339c63d35639d12da2c60b439b2ad5e3f2b236",
+    "reference/layernorm.py": "298650aee89b2c0edaaa6ce6ae42dbc191b7871c4e9b9a2da37dde404259b60a",
+    "scripts/benchmark_layernorm.py": "ac1cf8619a8e38dd6564deb64bfcf1a4b1aeca3223d6bd4c5e242bf645a97216"
+  },
+  "cases": [
+    {
+      "rows": 1,
+      "width": 1536,
+      "dtype": "float16",
+      "methods": {
+        "cuda_shared": {
+          "first_call_ms": 0.8393409661948681,
+          "graph_us_samples": [
+            3.7017598748207092,
+            3.604480028152466,
+            3.606719970703125,
+            3.59360009431839,
+            3.591359853744507,
+            3.611840009689331,
+            3.596160113811493,
+            3.6048001050949097,
+            3.6006399989128113,
+            3.611840009689331,
+            3.5923200845718384,
+            3.5872000455856323,
+            3.6476799845695496,
+            3.6582401394844055,
+            3.619840145111084,
+            3.614400029182434,
+            3.593280017375946,
+            3.5923200845718384,
+            3.5862401127815247,
+            3.5923200845718384,
+            3.5948801040649414,
+            3.58815997838974,
+            3.6048001050949097,
+            3.603839874267578,
+            3.6102399230003357,
+            3.5993599891662598,
+            3.600960075855255,
+            3.592959940433502,
+            3.587520122528076,
+            3.5942399501800537
+          ],
+          "wall_us_samples": [
+            4.4921995140612125,
+            4.4905999675393105,
+            4.389442037791014
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 3.5999999940395355,
+          "wall_us_median": 4.4905999675393105
+        },
+        "cuda_vector": {
+          "first_call_ms": 0.07572490721940994,
+          "graph_us_samples": [
+            2.0265600085258484,
+            1.9711999595165253,
+            1.969279944896698,
+            1.9574399292469025,
+            1.9542400538921356,
+            1.958400011062622,
+            1.966720074415207,
+            1.96383997797966,
+            1.9750399887561798,
+            1.9734400510787964,
+            1.9648000597953796,
+            1.9811199605464935,
+            2.033279985189438,
+            2.025279998779297,
+            2.01215997338295,
+            1.9648000597953796,
+            1.9644799828529358,
+            2.0873600244522095,
+            1.9654400646686554,
+            1.9660800695419312,
+            1.9519999623298645,
+            1.9568000733852386,
+            1.987839937210083,
+            1.9971199333667755,
+            1.9577600061893463,
+            1.960960030555725,
+            1.955839991569519,
+            1.9868800044059753,
+            1.9673599302768707,
+            1.9619199633598328
+          ],
+          "wall_us_samples": [
+            4.077970515936613,
+            4.006570670753717,
+            4.35268972069025
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 1.966400071978569,
+          "wall_us_median": 4.077970515936613
+        },
+        "pytorch_native": {
+          "first_call_ms": 0.056406017392873764,
+          "graph_us_samples": [
+            3.166719973087311,
+            3.139519989490509,
+            3.1334400177001953,
+            3.1360000371932983,
+            3.1305599212646484,
+            3.141759932041168,
+            3.1331199407577515,
+            3.134399950504303,
+            3.1302401423454285,
+            3.136959969997406,
+            3.1270399689674377,
+            3.1308799982070923,
+            3.1702399253845215,
+            3.1891199946403503,
+            3.1385600566864014,
+            3.136320114135742,
+            3.145279884338379,
+            3.1414398550987244,
+            3.1318399310112,
+            3.1334400177001953,
+            3.141759932041168,
+            3.134399950504303,
+            3.1641599535942078,
+            3.1603199243545532,
+            3.1382399797439575,
+            3.129279911518097,
+            3.1350401043891907,
+            3.134720027446747,
+            3.1379199028015137,
+            3.1248000264167786
+          ],
+          "wall_us_samples": [
+            7.4400706216692924,
+            7.09163025021553,
+            7.406310178339481
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 3.1361600756645203,
+          "wall_us_median": 7.406310178339481
+        },
+        "pytorch_compiled": {
+          "first_call_ms": 1370.6221419852227,
+          "graph_us_samples": [
+            1.7919999361038208,
+            1.7558400332927704,
+            1.7520000040531158,
+            1.7558400332927704,
+            1.7580799758434296,
+            1.767680048942566,
+            1.764799952507019,
+            1.7535999417304993,
+            1.7523199319839478,
+            1.746239960193634,
+            1.7584000527858734,
+            1.7552000284194946,
+            1.8086400628089905,
+            1.8051199615001678,
+            1.78847998380661,
+            1.7718400061130524,
+            1.7459200322628021,
+            1.7500799894332886,
+            1.7455999553203583,
+            1.7459200322628021,
+            1.757120043039322,
+            1.7478400468826294,
+            1.815039962530136,
+            1.7574399709701538,
+            1.7664000391960144,
+            1.7545600235462189,
+            1.7440000176429749,
+            1.7507199943065643,
+            1.7724800109863281,
+            1.7455999553203583
+          ],
+          "wall_us_samples": [
+            25.19535133615136,
+            22.86751987412572,
+            22.434969432651997
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 1.7558400332927704,
+          "wall_us_median": 22.86751987412572
+        }
+      },
+      "orders": [
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_shared",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_shared",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled"
+        ]
+      ]
+    },
+    {
+      "rows": 128,
+      "width": 1536,
+      "dtype": "float16",
+      "methods": {
+        "cuda_shared": {
+          "first_call_ms": 0.02427678555250168,
+          "graph_us_samples": [
+            4.481599926948547,
+            4.443199932575226,
+            4.427520036697388,
+            4.435519874095917,
+            4.439359903335571,
+            4.411199986934662,
+            4.422399997711182,
+            4.426240026950836,
+            4.4201600551605225,
+            4.402880072593689,
+            4.41184014081955,
+            4.401920139789581,
+            4.410879909992218,
+            4.404799938201904,
+            4.398399889469147,
+            4.407359957695007,
+            4.41536009311676,
+            4.405120015144348,
+            4.41536009311676,
+            4.399040043354034,
+            4.407680034637451,
+            4.4041600823402405,
+            4.402559995651245,
+            4.402559995651245,
+            4.40064013004303,
+            4.406079947948456,
+            4.4067201018333435,
+            4.408639967441559,
+            4.4121599197387695,
+            4.407359957695007
+          ],
+          "wall_us_samples": [
+            5.365230608731508,
+            5.262370686978102,
+            6.244049873203039
+          ],
+          "max_abs_error": 0.001953125,
+          "graph_us_median": 4.408160001039505,
+          "wall_us_median": 5.365230608731508
+        },
+        "cuda_vector": {
+          "first_call_ms": 0.03785802982747555,
+          "graph_us_samples": [
+            2.5017601251602173,
+            2.4079999327659607,
+            2.3999999463558197,
+            2.3785600066184998,
+            2.3763200640678406,
+            2.3638400435447693,
+            2.3852799832820892,
+            2.385919988155365,
+            2.380159944295883,
+            2.3635199666023254,
+            2.359360009431839,
+            2.35615998506546,
+            2.3657600581645966,
+            2.356480062007904,
+            2.3577600717544556,
+            2.3577600717544556,
+            2.3587200045585632,
+            2.35615998506546,
+            2.362239956855774,
+            2.353599965572357,
+            2.3555199801921844,
+            2.354239970445633,
+            2.3577600717544556,
+            2.3638400435447693,
+            2.364480048418045,
+            2.3526400327682495,
+            2.356480062007904,
+            2.3555199801921844,
+            2.3660799860954285,
+            2.3555199801921844
+          ],
+          "wall_us_samples": [
+            3.7728087045252323,
+            4.83731972053647,
+            6.284511182457209
+          ],
+          "max_abs_error": 0.001953125,
+          "graph_us_median": 2.3607999831438065,
+          "wall_us_median": 4.83731972053647
+        },
+        "pytorch_native": {
+          "first_call_ms": 0.062104081735014915,
+          "graph_us_samples": [
+            3.7027201056480408,
+            3.6742401123046875,
+            3.6422398686408997,
+            3.6531201004981995,
+            3.655039966106415,
+            3.6697599291801453,
+            3.6556801199913025,
+            3.6883199214935303,
+            3.643200099468231,
+            3.624959886074066,
+            3.6239999532699585,
+            3.6294400691986084,
+            3.627200126647949,
+            3.6259201169013977,
+            3.6323198676109314,
+            3.6326399445533752,
+            3.628160059452057,
+            3.6291199922561646,
+            3.635520040988922,
+            3.63072007894516,
+            3.628160059452057,
+            3.6233600974082947,
+            3.6208000779151917,
+            3.638719916343689,
+            3.6351999640464783,
+            3.6262398958206177,
+            3.6233600974082947,
+            3.6265599727630615,
+            3.6284801363945007,
+            3.6262398958206177
+          ],
+          "wall_us_samples": [
+            7.87713099271059,
+            11.672668624669313,
+            12.648049741983414
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 3.630080074071884,
+          "wall_us_median": 11.672668624669313
+        },
+        "pytorch_compiled": {
+          "first_call_ms": 244.8924737982452,
+          "graph_us_samples": [
+            2.677440047264099,
+            2.664960026741028,
+            2.662079930305481,
+            2.662400007247925,
+            2.6499199867248535,
+            2.6524800062179565,
+            2.6655998826026917,
+            2.6528000831604004,
+            2.6441600918769836,
+            2.6425600051879883,
+            2.6396799087524414,
+            2.6361599564552307,
+            2.6364800333976746,
+            2.6416000723838806,
+            2.648319900035858,
+            2.6390400528907776,
+            2.6364800333976746,
+            2.6736000180244446,
+            2.6387199759483337,
+            2.63839989900589,
+            2.6364800333976746,
+            2.640640139579773,
+            2.646079957485199,
+            2.6495999097824097,
+            2.6374399662017822,
+            2.635520100593567,
+            2.634879946708679,
+            2.642880082130432,
+            2.635520100593567,
+            2.6371198892593384
+          ],
+          "wall_us_samples": [
+            24.140658788383007,
+            21.34901937097311,
+            46.369310002774
+          ],
+          "max_abs_error": 0.0009765625,
+          "graph_us_median": 2.6420800387859344,
+          "wall_us_median": 24.140658788383007
+        }
+      },
+      "orders": [
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector",
+          "pytorch_native"
+        ]
+      ]
+    },
+    {
+      "rows": 2048,
+      "width": 1536,
+      "dtype": "float16",
+      "methods": {
+        "cuda_shared": {
+          "first_call_ms": 0.05408097058534622,
+          "graph_us_samples": [
+            30.181119441986084,
+            30.27872085571289,
+            30.194880962371826,
+            37.153921127319336,
+            37.085120677948,
+            40.31263828277588,
+            40.3388786315918,
+            40.31712055206299,
+            40.41791915893555,
+            40.366082191467285,
+            39.967360496520996,
+            39.63648080825806,
+            39.475200176239014,
+            39.63040113449097,
+            39.59712028503418,
+            39.68447923660278,
+            39.95424032211304,
+            39.97920036315918,
+            40.00448226928711,
+            39.94431972503662,
+            39.94240045547485,
+            40.36896228790283,
+            40.32896041870117,
+            40.32703876495361,
+            40.32063961029053,
+            40.27904033660889,
+            40.23071765899658,
+            39.84960079193115,
+            39.89696025848389,
+            39.488959312438965
+          ],
+          "wall_us_samples": [
+            40.37793958559632,
+            40.40376981720328,
+            40.45124864205718
+          ],
+          "max_abs_error": 0.00390625,
+          "graph_us_median": 39.94928002357483,
+          "wall_us_median": 40.40376981720328
+        },
+        "cuda_vector": {
+          "first_call_ms": 0.05602510645985603,
+          "graph_us_samples": [
+            9.005759954452515,
+            9.00928020477295,
+            9.026240110397339,
+            9.279680252075195,
+            9.335039854049683,
+            9.436479806900024,
+            10.040960311889648,
+            10.11199951171875,
+            10.026559829711914,
+            9.975680112838745,
+            9.912639856338501,
+            9.87999975681305,
+            9.834240078926086,
+            9.784640073776245,
+            9.869440197944641,
+            9.958400130271912,
+            9.956160187721252,
+            9.931520223617554,
+            10.016640424728394,
+            9.976320266723633,
+            9.893760085105896,
+            10.064640045166016,
+            9.981120228767395,
+            10.040960311889648,
+            10.020480155944824,
+            9.945600032806396,
+            9.863359928131104,
+            9.876480102539062,
+            9.944639801979065,
+            9.809280037879944
+          ],
+          "wall_us_samples": [
+            10.838010348379612,
+            10.785830672830343,
+            10.785430204123259
+          ],
+          "max_abs_error": 0.00390625,
+          "graph_us_median": 9.922080039978027,
+          "wall_us_median": 10.785830672830343
+        },
+        "pytorch_native": {
+          "first_call_ms": 0.08085300214588642,
+          "graph_us_samples": [
+            17.653759717941284,
+            17.588800191879272,
+            17.566399574279785,
+            17.963839769363403,
+            18.514879941940308,
+            18.41439962387085,
+            20.06335973739624,
+            20.102720260620117,
+            20.080959796905518,
+            20.11552095413208,
+            19.88160014152527,
+            19.610559940338135,
+            19.558720588684082,
+            19.585599899291992,
+            19.776639938354492,
+            19.84096050262451,
+            19.84447956085205,
+            19.855680465698242,
+            19.93216037750244,
+            19.90015983581543,
+            19.835200309753418,
+            20.08608102798462,
+            20.04256010055542,
+            20.077760219573975,
+            20.057919025421143,
+            19.926400184631348,
+            19.920320510864258,
+            19.82751965522766,
+            19.780800342559814,
+            19.575040340423584
+          ],
+          "wall_us_samples": [
+            21.49434993043542,
+            20.763829816132784,
+            20.670099183917046
+          ],
+          "max_abs_error": 0.0,
+          "graph_us_median": 19.84272003173828,
+          "wall_us_median": 20.763829816132784
+        },
+        "pytorch_compiled": {
+          "first_call_ms": 309.9723819177598,
+          "graph_us_samples": [
+            21.58911943435669,
+            21.746881008148193,
+            21.76192045211792,
+            26.944639682769775,
+            26.937599182128906,
+            29.304640293121338,
+            29.276480674743652,
+            29.34079885482788,
+            29.314239025115967,
+            29.046719074249268,
+            29.006400108337402,
+            28.660800457000732,
+            28.67392063140869,
+            28.737599849700928,
+            28.82080078125,
+            28.996798992156982,
+            28.99775981903076,
+            29.026238918304443,
+            29.09183979034424,
+            29.097280502319336,
+            29.041919708251953,
+            29.022719860076904,
+            29.309439659118652,
+            29.31583881378174,
+            29.268479347229004,
+            29.206719398498535,
+            29.196159839630127,
+            29.177920818328857,
+            28.976318836212158,
+            28.966081142425537
+          ],
+          "wall_us_samples": [
+            31.62098117172718,
+            30.19982948899269,
+            30.01804929226637
+          ],
+          "max_abs_error": 0.00390625,
+          "graph_us_median": 29.024479389190674,
+          "wall_us_median": 30.19982948899269
+        }
+      },
+      "orders": [
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled",
+          "cuda_vector"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_native",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_native",
+          "cuda_shared",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_native",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_compiled"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ],
+        [
+          "cuda_shared",
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector"
+        ],
+        [
+          "cuda_vector",
+          "pytorch_compiled",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_vector",
+          "cuda_shared",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_compiled",
+          "cuda_shared",
+          "cuda_vector",
+          "pytorch_native"
+        ],
+        [
+          "pytorch_compiled",
+          "pytorch_native",
+          "cuda_vector",
+          "cuda_shared"
+        ]
+      ]
+    }
+  ]
+}

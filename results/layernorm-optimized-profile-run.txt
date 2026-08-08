@@ -1,0 +1,10 @@
+pytorch_eager 13.0 CUDA launches/call
+pytorch_native 1.0 CUDA launches/call
+cuda_shared 1.0 CUDA launches/call
+cuda_warp 1.0 CUDA launches/call
+cuda_cached 1.0 CUDA launches/call
+cuda_vector 1.0 CUDA launches/call
+_ZN45_GLOBAL__N__df8bfeba_12_layernorm_cu_7daa2cb321layernorm_warp_kernelIN3c108BFloat16EEEvPKT_S5_S5_PS3_if BAR 4 LOCAL 0
+_ZN45_GLOBAL__N__df8bfeba_12_layernorm_cu_7daa2cb323layernorm_cached_kernelIN3c108BFloat16EEEvPKT_S5_S5_PS3_f BAR 4 LOCAL 0
+_ZN45_GLOBAL__N__df8bfeba_12_layernorm_cu_7daa2cb323layernorm_vector_kernelIN3c108BFloat16EEEvPKT_S5_S5_PS3_f BAR 4 LOCAL 0
+_ZN45_GLOBAL__N__df8bfeba_12_layernorm_cu_7daa2cb323layernorm_shared_kernelIN3c108BFloat16EEEvPKT_S5_S5_PS3_if BAR 20 LOCAL 0

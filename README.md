@@ -12,10 +12,29 @@ CUDA C++ operator development with PyTorch bindings, numerical tests and hardwar
 | Python-to-CUDA smoke cases | 18 passed |
 | Correctness and execution-semantics tests, seven variants | 480 passed |
 | Separate RMSNorm numerical cases, seven variants | 924 passed |
-| Compute Sanitizer memcheck with startup loading | 480 tests; 0 errors |
-| Alignment and row tails: memcheck / synccheck / racecheck | 60 cases each; 0 errors / hazards |
+| Full test suite, RMSNorm and LayerNorm | 791 passed |
+| LayerNorm numerical cases, four variants | 720 passed |
+| Compute Sanitizer memcheck with startup loading | 791 tests; 0 errors |
+| RMSNorm alignment and row tails: memcheck / synccheck / racecheck | 60 cases each; 0 errors / hazards |
 
 [Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json) · [Sanitizer diagnosis](results/sanitizer-diagnosis.md)
+
+## LayerNorm optimization
+
+Affine LayerNorm combines stable centered statistics, warp-shuffle reductions, register reuse and four-element vector loads/stores. On L4, the width-1536 vector kernel reduces static block barrier sites from **20 to 4** and reaches **9.795 μs** at 2048 rows, compared with **38.930 μs** for the CUDA baseline and **19.415 μs** for native PyTorch.
+
+![LayerNorm performance](assets/figures/layernorm_v1.png)
+
+| Rows | CUDA baseline | Vectorized CUDA | PyTorch native | PyTorch compiled |
+|---:|---:|---:|---:|---:|
+| 1 | 3.587 μs | 1.980 μs | 3.138 μs | 1.775 μs |
+| 8 | 3.684 μs | 2.024 μs | 3.196 μs | 1.816 μs |
+| 32 | 3.694 μs | 2.117 μs | 3.252 μs | 1.935 μs |
+| 128 | 4.361 μs | 2.425 μs | 3.645 μs | 2.676 μs |
+| 512 | 9.741 μs | 3.675 μs | 5.813 μs | 7.178 μs |
+| 2048 | 38.930 μs | 9.795 μs | 19.415 μs | 29.039 μs |
+
+BF16, width 1536; median of 30 interleaved repeats with 100 calls per replay. Independent confirmation, five additional row counts, three dtypes and fallback-width measurements are included in the [full experiment](results/layernorm.md).
 
 ## Width-1536 RMSNorm specialization
 
@@ -56,6 +75,8 @@ Median of 30 interleaved repeats, each replaying 100 calls. The chart includes t
 | Pybind interface | [csrc/bindings.cpp](csrc/bindings.cpp) |
 | CUDA kernels and launch wrappers | [csrc/kernels.cu](csrc/kernels.cu) |
 | Fixed-width caching and vector layouts | [csrc/rmsnorm_specialized.cu](csrc/rmsnorm_specialized.cu) |
+| LayerNorm kernels | [csrc/layernorm.cu](csrc/layernorm.cu) |
+| LayerNorm reference and native control | [reference/layernorm.py](reference/layernorm.py) |
 | RMSNorm reference | [reference/rmsnorm.py](reference/rmsnorm.py) |
 
 All RMSNorm variants use FP32 reduction and Qwen2-compatible cast order. The width-1536 vector path uses 128 threads per row; other widths keep the general warp fallback. It supports contiguous two-dimensional FP32, FP16 and BF16 tensors. [Development workflow](docs/DEVELOPMENT.md).

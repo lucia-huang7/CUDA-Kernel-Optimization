@@ -84,3 +84,20 @@ compute-sanitizer --tool synccheck --error-exitcode 99 python -m scripts.sanitiz
 [Initialization-order diagnosis and L4 verification](../results/sanitizer-diagnosis.md) includes the failing controls, a clean-build comparison and a deliberate out-of-bounds negative control. Historical failure logs remain unchanged. The startup-loading workaround does not claim a vendor-internal driver/runtime fix.
 
 Reference: [CUDA 12.8 size and alignment requirements](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-c-programming-guide/index.html#device-memory-accesses).
+
+
+## Affine LayerNorm
+
+`gpu_ops.layernorm` retains the shared-tree baseline. `layernorm_warp` uses a general 128-thread centered two-pass reduction. `layernorm_cached` and `layernorm_vector` specialize width 1536, retaining 12 FP32 values per thread. The vector entry validates all three input-pointer alignments and falls back to scalar caching when needed; other widths use the general warp kernel. Statistics and affine arithmetic use FP32, with only the final output cast to the input dtype.
+
+```bash
+python -m scripts.validate_layernorm --output results/new-layernorm-correctness.json
+python -m scripts.benchmark_layernorm --compiled --methods cuda_shared cuda_vector pytorch_native pytorch_compiled --output results/new-layernorm-comparison.json
+python -m scripts.profile_layernorm --prefix results/new-layernorm-profile
+compute-sanitizer --tool memcheck --report-api-errors all --error-exitcode 99 python -m scripts.sanitizer_workload pytest
+compute-sanitizer --tool racecheck --error-exitcode 99 python -c "from gpu_ops import initialize; initialize(); import pytest; raise SystemExit(pytest.main(['-q','tests/test_layernorm.py']))"
+```
+
+Use fresh paths. Keep at most six static row shapes per compiled-reference process; run other widths/dtypes in separate processes. Graph replay excludes Python dispatch; the same runner also records ordinary call wall times. The FP64 oracle executes on the CPU, separating the expected calculation from the CUDA kernels under test. The original GPU FP64 mean Racecheck report and PyTorch-only reproducer remain in the evidence.
+
+[LayerNorm experiment and results](../results/layernorm.md). Plotting follows the established DejaVu Sans axes/legend and Times New Roman caption style.

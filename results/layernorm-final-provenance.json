@@ -1,0 +1,35 @@
+{
+  "source_hashes": {
+    "csrc/layernorm.cu": "c2b22120ac84d4db1effd77ee17b18b6fed8947138ce5267403874f55ac3c077",
+    "csrc/bindings.cpp": "e672efc927a20f654387f0b8b87ff2c1f154a4a61927722e8bc857e6a23d97b6",
+    "gpu_ops/extension.py": "eb689ee286d3b241e845e7cd267490d7631225ea723c660e558b6d6f18a63b1d",
+    "gpu_ops/ops.py": "24f32cbab3113862eb592c21bb339c63d35639d12da2c60b439b2ad5e3f2b236",
+    "gpu_ops/__init__.py": "c9b4ff979f3afca55fb5b438be0a9876d85b35efc20be6713e5f4150327eb9a2",
+    "reference/layernorm.py": "298650aee89b2c0edaaa6ce6ae42dbc191b7871c4e9b9a2da37dde404259b60a",
+    "tests/test_layernorm.py": "7e24a7231096592fce67a34700b7c56be2f69b4a64d4cd39bea554afe1ad0cfa",
+    "scripts/benchmark_layernorm.py": "ac1cf8619a8e38dd6564deb64bfcf1a4b1aeca3223d6bd4c5e242bf645a97216",
+    "scripts/profile_layernorm.py": "825b004ccb8611cb6a38f43488d85f86035a5547440108dcdee7854b53408adc",
+    "scripts/validate_layernorm.py": "b91d7e422b6460ea6752102daa0d52ad5ee11e219f71c775aba12f8b3979d7b4",
+    "diagnostics/torch_fp64_mean.py": "3e6d5f0860c31f72b598be50da77c194f0f2d7efad0e5e22580c8be8d7078546"
+  },
+  "exit_codes": {
+    "layernorm-ncu-exit.txt": "1",
+    "layernorm-correctness-exit.txt": "0",
+    "layernorm-memcheck-exit.txt": "0",
+    "layernorm-synccheck-exit.txt": "0",
+    "layernorm-racecheck-exit.txt": "99",
+    "layernorm-float16-exit.txt": "0",
+    "layernorm-float32-exit.txt": "0",
+    "layernorm-width-768-exit.txt": "0",
+    "layernorm-width-1537-exit.txt": "0",
+    "layernorm-width-4096-exit.txt": "0",
+    "layernorm-torch-mean-control-exit.txt": "99",
+    "layernorm-torch-mean-latest-exit.txt": "99",
+    "layernorm-final-correctness-exit.txt": "0",
+    "layernorm-final-memcheck-exit.txt": "0",
+    "layernorm-final-synccheck-exit.txt": "0",
+    "layernorm-final-racecheck-exit.txt": "0"
+  },
+  "sanitizer_version": "NVIDIA (R) Compute Sanitizer\nCopyright (c) 2020-2025 NVIDIA Corporation\nVersion 2025.1.0.0 (build 35583870) (public-release)\n",
+  "binary_sha256": "c18fb7d69238e319d08df894614fe7636f85c5516efc7af5ae7abe1d3d22a2e4"
+}

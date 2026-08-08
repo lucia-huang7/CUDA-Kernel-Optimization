@@ -1,0 +1,3 @@
+1 768 {'cuda_shared': 2.984, 'cuda_vector': 3.207, 'pytorch_native': 2.683, 'pytorch_compiled': 1.439}
+128 768 {'cuda_shared': 3.526, 'cuda_vector': 3.402, 'pytorch_native': 3.014, 'pytorch_compiled': 1.713}
+512 768 {'cuda_shared': 7.302, 'cuda_vector': 4.162, 'pytorch_native': 3.996, 'pytorch_compiled': 3.494}

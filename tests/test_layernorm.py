@@ -1,7 +1,7 @@
 """LayerNorm semantics, numerical stability, contracts and CUDA ordering."""
 import pytest
 import torch
-from gpu_ops import layernorm
+from gpu_ops import layernorm, layernorm_warp, layernorm_cached, layernorm_vector
 from reference.layernorm import layernorm_reference, layernorm_native
 
 CUDA = pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA GPU required")
@@ -9,14 +9,14 @@ DTYPES = [torch.float32, torch.float16, torch.bfloat16]
 TOL = {torch.float32: dict(rtol=2e-5, atol=5e-6),
        torch.float16: dict(rtol=2e-3, atol=2e-3),
        torch.bfloat16: dict(rtol=2e-2, atol=2e-2)}
-VARIANTS = [layernorm]
+VARIANTS = [layernorm, layernorm_warp, layernorm_cached, layernorm_vector]
 
 
 def oracle(x, w, b, eps=1e-5):
-    values = x.double()
+    values = x.cpu().double()
     centered = values - values.mean(-1, keepdim=True)
     return (centered * torch.rsqrt(centered.square().mean(-1, keepdim=True) + eps)
-            * w.double() + b.double()).to(x.dtype)
+            * w.cpu().double() + b.cpu().double()).to(dtype=x.dtype, device=x.device)
 
 
 @pytest.mark.parametrize("dtype", DTYPES)
