@@ -24,7 +24,11 @@ at::Tensor gemm_cublas_cuda(const at::Tensor&, const at::Tensor&);
 at::Tensor gemm_tiled_cuda(const at::Tensor&, const at::Tensor&);
 at::Tensor gemm_register_cuda(const at::Tensor&, const at::Tensor&, int64_t);
 
+at::Tensor gemm_vector_cuda(const at::Tensor&, const at::Tensor&, int64_t);
+
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+  module.def("gemm_vector", &gemm_vector_cuda, "Vectorized register-blocked FP32 GEMM",
+             pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("config") = 0);
   module.def("gemm_tiled", &gemm_tiled_cuda, "Shared-memory FP32 GEMM");
   module.def("gemm_register", &gemm_register_cuda, "Register-blocked FP32 GEMM",
              pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("config") = 0);

@@ -64,3 +64,7 @@ def gemm_tiled(a, b):
 
 def gemm_register(a, b, config=0):
     return load_extension().gemm_register(a, b, config)
+
+
+def gemm_vector(a, b, config=0):
+    return load_extension().gemm_vector(a, b, config)

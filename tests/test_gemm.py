@@ -6,7 +6,7 @@ import gpu_ops
 from reference.gemm import configure_precision,gemm_oracle,tolerance
 
 CUDA=pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA GPU required')
-VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]
+VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]+[('gemm_vector',i) for i in range(3)]
 
 
 @pytest.fixture(params=VARIANTS)
@@ -96,3 +96,13 @@ def test_stream_and_graph(operation):
 def test_register_config(config):
     a=torch.ones(3,5,device='cuda');b=torch.ones(5,7,device='cuda')
     with pytest.raises(RuntimeError):gpu_ops.gemm_register(a,b,config=config)
+
+
+@CUDA
+@pytest.mark.parametrize('config',[0,1,2])
+@pytest.mark.parametrize('offsets',[(0,0),(1,0),(0,1)])
+def test_vector_aligned_tails(config,offsets):
+    ao,bo=offsets
+    a=torch.randn(19*36+ao,device='cuda')[ao:].reshape(19,36)
+    b=torch.randn(36*132+bo,device='cuda')[bo:].reshape(36,132)
+    torch.testing.assert_close(gpu_ops.gemm_vector(a,b,config),gemm_oracle(a,b),**tolerance(36))

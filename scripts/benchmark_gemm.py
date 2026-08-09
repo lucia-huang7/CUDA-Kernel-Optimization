@@ -21,6 +21,9 @@ def methods():
     if hasattr(gpu_ops,'gemm_register'):
         for i,name in enumerate(['reg64x64','reg32x64','reg16x64','reg16x128','reg32x128','reg64x128']):
             result[name]=functools.partial(gpu_ops.gemm_register,config=i)
+    if hasattr(gpu_ops,'gemm_vector'):
+        for i,name in enumerate(['vec64x128','vec32x128','vec16x64']):
+            result[name]=functools.partial(gpu_ops.gemm_vector,config=i)
     if hasattr(gpu_ops,'gemm_tuned'):result['tuned']=gpu_ops.gemm_tuned
     return result
 

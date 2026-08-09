@@ -14,3 +14,6 @@ __all__ += ["gemm_naive", "gemm_cublas"]
 
 from .ops import gemm_tiled, gemm_register
 __all__ += ["gemm_tiled", "gemm_register"]
+
+from .ops import gemm_vector
+__all__.append("gemm_vector")

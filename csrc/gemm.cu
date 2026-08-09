@@ -93,6 +93,62 @@ void launch_register(const at::Tensor& a,const at::Tensor& b,at::Tensor& c,cudaS
       a.data_ptr<float>(),b.data_ptr<float>(),c.data_ptr<float>(),a.size(0),b.size(1),a.size(1));
 }
 
+template<int BM,int BN,int TM>
+__global__ void gemm_vector_kernel(const float* a,const float* b,float* c,int m,int n,int k) {
+  constexpr int BK=32,ColThreads=BN/4,RowThreads=BM/TM,Threads=ColThreads*RowThreads;
+  __shared__ float as[BM][BK+1];
+  __shared__ __align__(16) float bs[BK][BN];
+  const int tr=threadIdx.x/ColThreads,tc=threadIdx.x%ColThreads;
+  const int block_row=blockIdx.y*BM,block_col=blockIdx.x*BN;
+  float accum[TM][4]={};
+  for(int start=0;start<k;start+=BK) {
+    for(int index=threadIdx.x;index<BM*BK/4;index+=Threads) {
+      const int row=index/(BK/4),p=(index%(BK/4))*4;
+      float4 pack=make_float4(0,0,0,0);
+      if(block_row+row<m && start+p+3<k)
+        pack=*reinterpret_cast<const float4*>(a+static_cast<int64_t>(block_row+row)*k+start+p);
+      as[row][p]=pack.x;as[row][p+1]=pack.y;as[row][p+2]=pack.z;as[row][p+3]=pack.w;
+    }
+    for(int index=threadIdx.x;index<BK*BN/4;index+=Threads) {
+      const int p=index/(BN/4),col=(index%(BN/4))*4;
+      float4 pack=make_float4(0,0,0,0);
+      if(start+p<k && block_col+col+3<n)
+        pack=*reinterpret_cast<const float4*>(b+static_cast<int64_t>(start+p)*n+block_col+col);
+      *reinterpret_cast<float4*>(&bs[p][col])=pack;
+    }
+    __syncthreads();
+    #pragma unroll
+    for(int p=0;p<BK;++p) {
+      const float4 bv=*reinterpret_cast<const float4*>(&bs[p][tc*4]);
+      #pragma unroll
+      for(int i=0;i<TM;++i) {
+        const float av=as[tr+i*RowThreads][p];
+        accum[i][0]=fmaf(av,bv.x,accum[i][0]);
+        accum[i][1]=fmaf(av,bv.y,accum[i][1]);
+        accum[i][2]=fmaf(av,bv.z,accum[i][2]);
+        accum[i][3]=fmaf(av,bv.w,accum[i][3]);
+      }
+    }
+    __syncthreads();
+  }
+  #pragma unroll
+  for(int i=0;i<TM;++i) {
+    const int row=block_row+tr+i*RowThreads,col=block_col+tc*4;
+    if(row<m && col+3<n)
+      *reinterpret_cast<float4*>(c+static_cast<int64_t>(row)*n+col)=
+          make_float4(accum[i][0],accum[i][1],accum[i][2],accum[i][3]);
+  }
+}
+
+template<int BM,int BN,int TM>
+void launch_vector(const at::Tensor& a,const at::Tensor& b,at::Tensor& c,cudaStream_t stream) {
+  constexpr int Threads=(BM/TM)*(BN/4);
+  dim3 grid((static_cast<unsigned int>(b.size(1))+BN-1)/BN,
+            (static_cast<unsigned int>(a.size(0))+BM-1)/BM);
+  gemm_vector_kernel<BM,BN,TM><<<grid,Threads,0,stream>>>(
+      a.data_ptr<float>(),b.data_ptr<float>(),c.data_ptr<float>(),a.size(0),b.size(1),a.size(1));
+}
+
 void check_inputs(const at::Tensor& a,const at::Tensor& b) {
   TORCH_CHECK(a.is_cuda() && b.is_cuda() && a.device()==b.device(),"Inputs must share a CUDA device");
   TORCH_CHECK(a.dim()==2 && b.dim()==2,"Inputs must be matrices");
@@ -181,6 +237,25 @@ at::Tensor gemm_register_cuda(const at::Tensor& a,const at::Tensor& b,int64_t co
     case 3:launch_register<16,128,32,2,8>(a,b,c,stream);break;
     case 4:launch_register<32,128,32,4,4>(a,b,c,stream);break;
     case 5:launch_register<64,128,32,4,4>(a,b,c,stream);break;
+  }
+  C10_CUDA_KERNEL_LAUNCH_CHECK();
+  return c;
+}
+
+at::Tensor gemm_vector_cuda(const at::Tensor& a,const at::Tensor& b,int64_t config) {
+  check_inputs(a,b);
+  TORCH_CHECK(config>=0 && config<3,"Vector config must be in [0, 2]");
+  const bool aligned=reinterpret_cast<uintptr_t>(a.data_ptr())%16==0 &&
+                     reinterpret_cast<uintptr_t>(b.data_ptr())%16==0;
+  if(a.size(1)%4!=0 || b.size(1)%4!=0 || !aligned)return gemm_register_cuda(a,b,0);
+  c10::cuda::CUDAGuard guard(a.device());
+  auto c=prepare(a,b);
+  if(empty_product(a,c))return c;
+  auto stream=at::cuda::getCurrentCUDAStream(a.get_device()).stream();
+  switch(config) {
+    case 0:launch_vector<64,128,4>(a,b,c,stream);break;
+    case 1:launch_vector<32,128,4>(a,b,c,stream);break;
+    case 2:launch_vector<16,64,2>(a,b,c,stream);break;
   }
   C10_CUDA_KERNEL_LAUNCH_CHECK();
   return c;
