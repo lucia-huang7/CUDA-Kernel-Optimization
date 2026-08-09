@@ -1,16 +1,18 @@
 """GEMM precision, tile tails, input contracts, stream order and graph replay."""
+import functools
 import pytest
 import torch
 import gpu_ops
 from reference.gemm import configure_precision,gemm_oracle,tolerance
 
 CUDA=pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA GPU required')
-VARIANTS=['gemm_naive','gemm_cublas']
+VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]
 
 
 @pytest.fixture(params=VARIANTS)
 def operation(request):
     configure_precision()
+    if isinstance(request.param,tuple):return functools.partial(getattr(gpu_ops,request.param[0]),config=request.param[1])
     return getattr(gpu_ops,request.param)
 
 
@@ -87,3 +89,10 @@ def test_stream_and_graph(operation):
     with torch.cuda.graph(graph):captured=operation(a,b)
     a.normal_();b.normal_();graph.replay()
     torch.testing.assert_close(captured,gemm_oracle(a,b),**tolerance(33))
+
+
+@CUDA
+@pytest.mark.parametrize('config',[-1,6])
+def test_register_config(config):
+    a=torch.ones(3,5,device='cuda');b=torch.ones(5,7,device='cuda')
+    with pytest.raises(RuntimeError):gpu_ops.gemm_register(a,b,config=config)

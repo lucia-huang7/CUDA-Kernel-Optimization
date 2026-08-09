@@ -11,3 +11,6 @@ __all__ += ["layernorm_warp", "layernorm_cached", "layernorm_vector"]
 
 from .ops import gemm_naive, gemm_cublas
 __all__ += ["gemm_naive", "gemm_cublas"]
+
+from .ops import gemm_tiled, gemm_register
+__all__ += ["gemm_tiled", "gemm_register"]

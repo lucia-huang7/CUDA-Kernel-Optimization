@@ -56,3 +56,11 @@ def gemm_naive(a, b):
 
 def gemm_cublas(a, b):
     return load_extension().gemm_cublas(a, b)
+
+
+def gemm_tiled(a, b):
+    return load_extension().gemm_tiled(a, b)
+
+
+def gemm_register(a, b, config=0):
+    return load_extension().gemm_register(a, b, config)

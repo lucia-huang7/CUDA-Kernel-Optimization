@@ -21,7 +21,13 @@ at::Tensor layernorm_vector_cuda(const at::Tensor&, const at::Tensor&, const at:
 at::Tensor gemm_naive_cuda(const at::Tensor&, const at::Tensor&);
 at::Tensor gemm_cublas_cuda(const at::Tensor&, const at::Tensor&);
 
+at::Tensor gemm_tiled_cuda(const at::Tensor&, const at::Tensor&);
+at::Tensor gemm_register_cuda(const at::Tensor&, const at::Tensor&, int64_t);
+
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+  module.def("gemm_tiled", &gemm_tiled_cuda, "Shared-memory FP32 GEMM");
+  module.def("gemm_register", &gemm_register_cuda, "Register-blocked FP32 GEMM",
+             pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("config") = 0);
   module.def("gemm_naive", &gemm_naive_cuda, "FP32 row-major GEMM baseline");
   module.def("gemm_cublas", &gemm_cublas_cuda, "FP32 pedantic cuBLAS GEMM control");
   module.def("layernorm_warp", &layernorm_warp_cuda, "Forward-only LayerNorm warp variant",
