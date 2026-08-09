@@ -24,6 +24,8 @@ def methods():
     if hasattr(gpu_ops,'gemm_vector'):
         for i,name in enumerate(['vec64x128','vec32x128','vec16x64']):
             result[name]=functools.partial(gpu_ops.gemm_vector,config=i)
+    if hasattr(gpu_ops,'gemm_splitk'):
+        for splits in [4,8]:result['split'+str(splits)]=functools.partial(gpu_ops.gemm_splitk,splits=splits)
     if hasattr(gpu_ops,'gemm_tuned'):result['tuned']=gpu_ops.gemm_tuned
     return result
 

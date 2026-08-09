@@ -21,7 +21,7 @@ __global__ void gemm_tiled_kernel(const float* a,const float* b,float* c,int m,i
   const int row=blockIdx.y*16+threadIdx.y;
   const int col=blockIdx.x*16+threadIdx.x;
   float sum=0.0f;
-  for(int start=0;start<k;start+=16) {
+  for(int64_t start=0;start<k;start+=16) {
     as[threadIdx.y][threadIdx.x]=(row<m && start+threadIdx.x<k)
       ?a[static_cast<int64_t>(row)*k+start+threadIdx.x]:0.0f;
     bs[threadIdx.y][threadIdx.x]=(start+threadIdx.y<k && col<n)
@@ -46,7 +46,7 @@ __global__ void gemm_register_kernel(const float* a,const float* b,float* c,int 
   const int block_row=blockIdx.y*BM;
   const int block_col=blockIdx.x*BN;
   float accum[TM][TN]={};
-  for(int start=0;start<k;start+=BK) {
+  for(int64_t start=0;start<k;start+=BK) {
     for(int index=threadIdx.x;index<BM*BK;index+=Threads) {
       const int r=index/BK,p=index%BK;
       as[r][p]=(block_row+r<m && start+p<k)
@@ -93,7 +93,7 @@ void launch_register(const at::Tensor& a,const at::Tensor& b,at::Tensor& c,cudaS
       a.data_ptr<float>(),b.data_ptr<float>(),c.data_ptr<float>(),a.size(0),b.size(1),a.size(1));
 }
 
-template<int BM,int BN,int TM>
+template<int BM,int BN,int TM,bool Split=false>
 __global__ void gemm_vector_kernel(const float* a,const float* b,float* c,int m,int n,int k) {
   constexpr int BK=32,ColThreads=BN/4,RowThreads=BM/TM,Threads=ColThreads*RowThreads;
   __shared__ float as[BM][BK+1];
@@ -101,7 +101,16 @@ __global__ void gemm_vector_kernel(const float* a,const float* b,float* c,int m,
   const int tr=threadIdx.x/ColThreads,tc=threadIdx.x%ColThreads;
   const int block_row=blockIdx.y*BM,block_col=blockIdx.x*BN;
   float accum[TM][4]={};
-  for(int start=0;start<k;start+=BK) {
+  int64_t begin=0,end=k;
+  if constexpr(Split) {
+    const int64_t tiles=(static_cast<int64_t>(k)+BK-1)/BK;
+    const int64_t per_split=(tiles+gridDim.z-1)/gridDim.z;
+    begin=blockIdx.z*per_split*BK;
+    end=begin+per_split*BK;
+    if(end>k)end=k;
+    c+=static_cast<int64_t>(blockIdx.z)*m*n;
+  }
+  for(int64_t start=begin;start<end;start+=BK) {
     for(int index=threadIdx.x;index<BM*BK/4;index+=Threads) {
       const int row=index/(BK/4),p=(index%(BK/4))*4;
       float4 pack=make_float4(0,0,0,0);
@@ -257,6 +266,39 @@ at::Tensor gemm_vector_cuda(const at::Tensor& a,const at::Tensor& b,int64_t conf
     case 1:launch_vector<32,128,4>(a,b,c,stream);break;
     case 2:launch_vector<16,64,2>(a,b,c,stream);break;
   }
+  C10_CUDA_KERNEL_LAUNCH_CHECK();
+  return c;
+}
+
+namespace {
+__global__ void gemm_split_reduce_kernel(const float* partial,float* output,int64_t count,int splits) {
+  const int64_t index=static_cast<int64_t>(blockIdx.x)*blockDim.x+threadIdx.x;
+  if(index>=count)return;
+  float sum=0.0f;
+  for(int part=0;part<splits;++part)sum+=partial[static_cast<int64_t>(part)*count+index];
+  output[index]=sum;
+}
+}  // namespace
+
+at::Tensor gemm_splitk_cuda(const at::Tensor& a,const at::Tensor& b,int64_t splits) {
+  check_inputs(a,b);
+  TORCH_CHECK(splits==1 || splits==2 || splits==4 || splits==8,"Split count must be 1, 2, 4 or 8");
+  const bool aligned=reinterpret_cast<uintptr_t>(a.data_ptr())%16==0 &&
+                     reinterpret_cast<uintptr_t>(b.data_ptr())%16==0;
+  if(a.size(0)>64 || a.size(1)<256 || a.size(1)%4 || b.size(1)%4 || !aligned)
+    return gemm_vector_cuda(a,b,0);
+  c10::cuda::CUDAGuard guard(a.device());
+  auto c=prepare(a,b);
+  if(empty_product(a,c))return c;
+  auto partial=at::empty({splits,a.size(0),b.size(1)},a.options());
+  auto stream=at::cuda::getCurrentCUDAStream(a.get_device()).stream();
+  dim3 grid((static_cast<unsigned int>(b.size(1))+63)/64,
+            (static_cast<unsigned int>(a.size(0))+15)/16,static_cast<unsigned int>(splits));
+  gemm_vector_kernel<16,64,2,true><<<grid,128,0,stream>>>(
+      a.data_ptr<float>(),b.data_ptr<float>(),partial.data_ptr<float>(),a.size(0),b.size(1),a.size(1));
+  const int64_t count=c.numel();
+  gemm_split_reduce_kernel<<<static_cast<unsigned int>((count+255)/256),256,0,stream>>>(
+      partial.data_ptr<float>(),c.data_ptr<float>(),count,splits);
   C10_CUDA_KERNEL_LAUNCH_CHECK();
   return c;
 }

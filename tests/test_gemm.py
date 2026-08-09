@@ -6,13 +6,15 @@ import gpu_ops
 from reference.gemm import configure_precision,gemm_oracle,tolerance
 
 CUDA=pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA GPU required')
-VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]+[('gemm_vector',i) for i in range(3)]
+VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]+[('gemm_vector',i) for i in range(3)]+[('gemm_splitk',4),('gemm_splitk',8)]
 
 
 @pytest.fixture(params=VARIANTS)
 def operation(request):
     configure_precision()
-    if isinstance(request.param,tuple):return functools.partial(getattr(gpu_ops,request.param[0]),config=request.param[1])
+    if isinstance(request.param,tuple):
+        key='splits' if request.param[0]=='gemm_splitk' else 'config'
+        return functools.partial(getattr(gpu_ops,request.param[0]),**{key:request.param[1]})
     return getattr(gpu_ops,request.param)
 
 
@@ -106,3 +108,13 @@ def test_vector_aligned_tails(config,offsets):
     a=torch.randn(19*36+ao,device='cuda')[ao:].reshape(19,36)
     b=torch.randn(36*132+bo,device='cuda')[bo:].reshape(36,132)
     torch.testing.assert_close(gpu_ops.gemm_vector(a,b,config),gemm_oracle(a,b),**tolerance(36))
+
+
+@CUDA
+@pytest.mark.parametrize('splits',[1,2,4,8])
+@pytest.mark.parametrize('offsets',[(0,0),(1,0),(0,1)])
+def test_splitk_tails(splits,offsets):
+    ao,bo=offsets
+    a=torch.randn(19*260+ao,device='cuda')[ao:].reshape(19,260)
+    b=torch.randn(260*132+bo,device='cuda')[bo:].reshape(260,132)
+    torch.testing.assert_close(gpu_ops.gemm_splitk(a,b,splits),gemm_oracle(a,b),**tolerance(260))

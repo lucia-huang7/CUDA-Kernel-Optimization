@@ -17,3 +17,6 @@ __all__ += ["gemm_tiled", "gemm_register"]
 
 from .ops import gemm_vector
 __all__.append("gemm_vector")
+
+from .ops import gemm_splitk
+__all__.append("gemm_splitk")

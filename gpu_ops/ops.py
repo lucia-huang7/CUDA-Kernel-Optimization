@@ -68,3 +68,7 @@ def gemm_register(a, b, config=0):
 
 def gemm_vector(a, b, config=0):
     return load_extension().gemm_vector(a, b, config)
+
+
+def gemm_splitk(a, b, splits=8):
+    return load_extension().gemm_splitk(a, b, splits)
