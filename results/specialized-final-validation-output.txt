@@ -1,1 +1,0 @@
-PASS: 924 numerical cases across FP32, FP16 and BF16.

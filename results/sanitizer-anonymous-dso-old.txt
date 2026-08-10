@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-ANONYMOUS_DSO_PASSED
-========= ERROR SUMMARY: 0 errors

@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-PRELOAD_PASSED
-========= ERROR SUMMARY: 0 errors

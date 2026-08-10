@@ -1,4 +1,0 @@
-========= COMPUTE-SANITIZER
-Native extension loaded before CUDA workloads.
-PASS: 924 numerical cases across FP32, FP16 and BF16.
-========= ERROR SUMMARY: 0 errors

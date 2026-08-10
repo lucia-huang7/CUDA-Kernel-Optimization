@@ -1,4 +1,0 @@
-========= COMPUTE-SANITIZER
-Native extension loaded before CUDA workloads.
-PASS: 60 specialized alignment/tail cases
-========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)

@@ -1,3 +1,0 @@
-1 1536 {'cuda_shared': 3.495, 'cuda_vector': 2.09, 'pytorch_native': 3.471, 'pytorch_compiled': 1.888}
-128 1536 {'cuda_shared': 4.403, 'cuda_vector': 2.821, 'pytorch_native': 4.257, 'pytorch_compiled': 2.794}
-2048 1536 {'cuda_shared': 55.684, 'cuda_vector': 23.875, 'pytorch_native': 34.473, 'pytorch_compiled': 41.24}

@@ -1,6 +1,0 @@
-1 1536 {'cuda_shared': 3.587, 'cuda_vector': 1.98, 'pytorch_native': 3.138, 'pytorch_compiled': 1.775}
-8 1536 {'cuda_shared': 3.684, 'cuda_vector': 2.024, 'pytorch_native': 3.196, 'pytorch_compiled': 1.816}
-32 1536 {'cuda_shared': 3.694, 'cuda_vector': 2.117, 'pytorch_native': 3.252, 'pytorch_compiled': 1.935}
-128 1536 {'cuda_shared': 4.361, 'cuda_vector': 2.425, 'pytorch_native': 3.645, 'pytorch_compiled': 2.676}
-512 1536 {'cuda_shared': 9.741, 'cuda_vector': 3.675, 'pytorch_native': 5.813, 'pytorch_compiled': 7.178}
-2048 1536 {'cuda_shared': 38.93, 'cuda_vector': 9.795, 'pytorch_native': 19.415, 'pytorch_compiled': 29.039}

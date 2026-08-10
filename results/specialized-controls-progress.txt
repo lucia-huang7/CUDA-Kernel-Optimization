@@ -1,6 +1,0 @@
-Rows 1 {'pytorch_eager': 10.203, 'cuda_shared': 3.186, 'cuda_warp': 3.014, 'cuda_cached': 2.085, 'cuda_rows': 8.022, 'cuda_vector': 2.28, 'cuda_reload': 2.141, 'cuda_vector128': 1.679, 'pytorch_compiled': 1.433}
-Rows 8 {'pytorch_eager': 11.869, 'cuda_shared': 3.275, 'cuda_warp': 3.106, 'cuda_cached': 2.138, 'cuda_rows': 8.109, 'cuda_vector': 2.468, 'cuda_reload': 2.2, 'cuda_vector128': 1.725, 'pytorch_compiled': 1.448}
-Rows 32 {'pytorch_eager': 13.388, 'cuda_shared': 3.315, 'cuda_warp': 3.146, 'cuda_cached': 2.185, 'cuda_rows': 8.495, 'cuda_vector': 2.572, 'cuda_reload': 2.246, 'cuda_vector128': 1.821, 'pytorch_compiled': 1.565}
-Rows 128 {'pytorch_eager': 15.391, 'cuda_shared': 3.614, 'cuda_warp': 3.288, 'cuda_cached': 2.399, 'cuda_rows': 8.472, 'cuda_vector': 2.642, 'cuda_reload': 2.448, 'cuda_vector128': 2.069, 'pytorch_compiled': 1.892}
-Rows 512 {'pytorch_eager': 30.245, 'cuda_shared': 7.358, 'cuda_warp': 6.584, 'cuda_cached': 4.522, 'cuda_rows': 9.277, 'cuda_vector': 4.133, 'cuda_reload': 4.856, 'cuda_vector128': 3.106, 'pytorch_compiled': 4.523}
-Rows 2048 {'pytorch_eager': 128.18, 'cuda_shared': 28.211, 'cuda_warp': 24.123, 'cuda_cached': 14.562, 'cuda_rows': 23.37, 'cuda_vector': 15.123, 'cuda_reload': 17.131, 'cuda_vector128': 10.216, 'pytorch_compiled': 19.384}

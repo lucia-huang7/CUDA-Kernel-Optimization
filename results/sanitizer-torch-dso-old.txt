@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-TORCH_DSO_PASSED
-========= ERROR SUMMARY: 0 errors

@@ -1,100 +1,114 @@
-# GPU Kernel Lab
+# CUDA Kernel Optimization
 
-CUDA C++ operator development with PyTorch bindings, numerical tests and hardware profiling. The project covers normalization and matrix multiplication, with implementations and measurements added in stages.
+CUDA C++ implementations of RMSNorm, affine LayerNorm, and FP32 GEMM through PyTorch extensions. Tuned on NVIDIA L4 for width-1536 normalization and two rectangular GEMM workloads.
 
-## Validation
+## Repository
 
-**NVIDIA L4 · PyTorch 2.8.0 · CUDA 12.8 · FP32 / FP16 / BF16**
+```text
+csrc/          CUDA kernels and C++ bindings
+gpu_ops/       Python API and extension loader
+reference/     PyTorch comparison implementations
+scripts/       Benchmarks and numerical validation
+tests/         Operator and execution-semantics tests
+results/       Final confirmation measurements
+assets/        README figures
+```
 
-| Check | Result |
-|---|---:|
-| Initial extension build and first load | 17.49 s |
-| Python-to-CUDA smoke cases | 18 passed |
-| RMSNorm correctness and execution semantics, seven variants | 480 passed |
-| Separate RMSNorm numerical cases, seven variants | 924 passed |
-| Full test suite, RMSNorm / LayerNorm / GEMM | 1330 passed |
-| LayerNorm numerical cases, four variants | 720 passed |
-| GEMM numerical cases, all candidates and controls | 768 passed |
-| GEMM synchronization / race checks | 192 cases each; 0 errors / hazards |
-| Compute Sanitizer memcheck with startup loading | 1330 tests; 0 errors |
-| RMSNorm alignment and row tails: memcheck / synccheck / racecheck | 60 cases each; 0 errors / hazards |
+## Performance
 
-[Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json) · [Sanitizer diagnosis](results/sanitizer-diagnosis.md)
+Median GPU latency in microseconds, measured with CUDA Graph replay. Normalization uses BF16; GEMM uses FP32 with TF32 disabled. Each row compares methods from the same confirmation run.
 
-## FP32 GEMM optimization
+| Operator / input | Tuned CUDA | PyTorch compiled | PyTorch native | Direct cuBLAS | Result |
+|---|---:|---:|---:|---:|---|
+| RMSNorm · 2048 × 1536 | **9.359** | 17.905 | N/A | N/A | 1.91× vs compiled |
+| LayerNorm · 2048 × 1536 | **9.795** | 29.039 | 19.415 | N/A | 2.96× vs compiled; 1.98× vs native |
+| GEMM · M16 / N4096 / K4096 | **263.518** | N/A | 281.820 | 282.527 | 6.7% lower latency vs cuBLAS |
+| GEMM · M4096 / N4096 / K32 | **265.044** | N/A | 274.468 | 271.799 | 2.5% lower latency vs cuBLAS |
+| GEMM · M512 / N512 / K512 | 68.668 | N/A | 32.454 | **32.423** | CUDA latency is 2.12× cuBLAS |
 
-Shared-memory tiling, register blocking and vectorized tile access reduce repeated loads and retain multiple output accumulators per thread. A guarded split-K path increases parallelism for small-M, long-K matrices. Independent L4 confirmation shows **2.34×** and **3.79×** speedups over the CUDA baseline on the two rectangular target shapes, alongside PyTorch and direct cuBLAS comparisons with TF32 disabled.
+For GEMM, “PyTorch native” is `torch.mm`. Performance depends on workload shape and execution mode; detailed comparisons include cases where PyTorch and cuBLAS remain faster.
+
+The final suite passed **1,330 tests under Compute Sanitizer memcheck with zero errors**.
+
+## FP32 GEMM
+
+The tuned kernels achieve 2.34× and 3.79× speedups over the naive CUDA baseline on the two rectangular FP32 targets. The workloads benefit from different designs. Register blocking alone regresses on the small-M case. Four-way split-K increases its compute grid from 64 to 256 blocks, at the cost of a 1 MiB workspace and a separate reduction kernel. Vectorized tile access improves the small-K case.
+
+Dispatch rules were fixed before evaluating five additional shapes. Tuned CUDA improves on the naive baseline across those shapes, while cuBLAS remains faster on four of the five held-out shapes and the square control.
+
+Comparisons include the full operation, including split-K reduction. PyTorch disables TF32 and direct cuBLAS uses pedantic FP32 compute. CUDA Graph replay and synchronized ordinary-call latency are reported separately. The short-K GEMM advantage in replay disappears in ordinary-call timing, where tuned CUDA and direct cuBLAS are effectively tied.
 
 ![GEMM performance](assets/figures/gemm_v1.png)
 
-| M × N × K | CUDA baseline | Shared tile | Tuned CUDA | PyTorch | cuBLAS |
-|---|---:|---:|---:|---:|---:|
-| 16 × 4096 × 4096 | 617.044 μs | 464.093 μs | 263.518 μs | 281.820 μs | 282.527 μs |
-| 4096 × 4096 × 32 | 1004.693 μs | 791.953 μs | 265.044 μs | 274.468 μs | 271.799 μs |
-| 512 × 512 × 512 | 191.522 μs | 149.533 μs | 68.668 μs | 32.454 μs | 32.423 μs |
+[CUDA implementation](csrc/gemm.cu)
 
-FP32, median of 30 interleaved repetitions with 20 calls per replay. All candidate configurations, five additional shapes, ordinary-call timings and resource measurements are in the [full experiment](results/gemm.md).
+## LayerNorm
 
-## LayerNorm optimization
-
-Affine LayerNorm combines stable centered statistics, warp-shuffle reductions, register reuse and four-element vector loads/stores. On L4, the width-1536 vector kernel reduces static block barrier sites from **20 to 4** and reaches **9.795 μs** at 2048 rows, compared with **38.930 μs** for the CUDA baseline and **19.415 μs** for native PyTorch.
+The width-1536 path caches twelve FP32 values per thread and combines warp reductions with vectorized loads/stores, reducing static barrier sites from 20 to 4. Both native PyTorch and the custom implementation launch one kernel; the speedup does not come from reducing kernel-launch count. Statistics and affine arithmetic accumulate in FP32 before the final output cast.
 
 ![LayerNorm performance](assets/figures/layernorm_v1.png)
 
-| Rows | CUDA baseline | Vectorized CUDA | PyTorch native | PyTorch compiled |
-|---:|---:|---:|---:|---:|
-| 1 | 3.587 μs | 1.980 μs | 3.138 μs | 1.775 μs |
-| 8 | 3.684 μs | 2.024 μs | 3.196 μs | 1.816 μs |
-| 32 | 3.694 μs | 2.117 μs | 3.252 μs | 1.935 μs |
-| 128 | 4.361 μs | 2.425 μs | 3.645 μs | 2.676 μs |
-| 512 | 9.741 μs | 3.675 μs | 5.813 μs | 7.178 μs |
-| 2048 | 38.930 μs | 9.795 μs | 19.415 μs | 29.039 μs |
+[CUDA implementation](csrc/layernorm.cu)
 
-BF16, width 1536; median of 30 interleaved repeats with 100 calls per replay. Independent confirmation, five additional row counts, three dtypes and fallback-width measurements are included in the [full experiment](results/layernorm.md).
+## RMSNorm
 
-## Width-1536 RMSNorm specialization
+Controlled ablations show that register caching improves latency, while scalar row grouping regresses. The selected width-1536 layout uses 128 threads per row and four-element vector access, with scalar and general-width fallbacks. Reduction, layout-control, and confirmation runs remain separate datasets rather than a chain of cumulative speedups.
 
-Register reuse, fixed-width unrolling and a 128-thread vectorized row layout reduce GPU replay latency by **37.4%–58.2%** on the six confirmation shapes versus the previous warp kernel. At 2048 rows, the new kernel reaches **9.359 μs**, compared with **17.905 μs** for PyTorch compiled.
-
-![Specialized RMSNorm performance](assets/figures/rmsnorm_specialized_v1.png)
-
-| Rows | Previous CUDA | Vector 128 | PyTorch compiled |
-|---:|---:|---:|---:|
-| 1 | 3.009 μs | 1.674 μs | 1.426 μs |
-| 128 | 3.309 μs | 2.070 μs | 1.897 μs |
-| 512 | 6.303 μs | 3.044 μs | 4.293 μs |
-| 2048 | 22.379 μs | 9.359 μs | 17.905 μs |
-
-BF16, width 1536; median of 30 interleaved repeats with 100 calls per replay. A fresh-process confirmation and five additional row counts accompany the candidate ablations. [Full experiment](results/rmsnorm-specialized.md).
-
-## RMSNorm reduction optimization
-
-Warp-shuffle reduction cuts block-wide barriers from **9 to 2** and static shared storage from **1024 to 32 bytes per block**. On L4, BF16 GPU replay latency falls by **5.0%–14.3%** across 1–2048 rows at width 1536.
+![RMSNorm vector layout performance](assets/figures/rmsnorm_specialized_v1.png)
 
 ![RMSNorm reduction performance](assets/figures/rmsnorm_reduction_v1.png)
 
-| Rows | CUDA baseline | Warp reduction | Latency reduction |
-|---:|---:|---:|---:|
-| 1 | 3.183 us | 3.012 us | 5.3% |
-| 128 | 3.616 us | 3.288 us | 9.1% |
-| 512 | 7.528 us | 6.587 us | 12.5% |
-| 2048 | 29.852 us | 25.579 us | 14.3% |
+[CUDA implementation](csrc/rmsnorm_specialized.cu)
 
-Median of 30 interleaved repeats, each replaying 100 calls. The chart includes the faster PyTorch compiled control. [Full experiment and raw evidence](results/rmsnorm-optimization.md).
+## Build and run
+
+Linux, NVIDIA GPU, CUDA toolkit 12.8 (`nvcc`), and a C++ compiler are required. The recorded GPU stack uses PyTorch 2.8.0+cu128 and NVIDIA L4 (SM 8.9). Run from the repository root.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cu128
+python -m pip install -r requirements-build.txt
+export TORCH_CUDA_ARCH_LIST=8.9
+export MAX_JOBS=2
+```
+
+The first `initialize()` call builds and loads the extension. Call it once before CUDA tensor operations.
+
+```python
+import torch
+from gpu_ops import initialize, rmsnorm_vector128
+
+initialize()
+x = torch.randn(128, 1536, device="cuda", dtype=torch.bfloat16)
+weight = torch.ones(1536, device="cuda", dtype=x.dtype)
+y = rmsnorm_vector128(x, weight)
+print(y.shape)
+```
+
+Run the test suite and one GEMM comparison. Use a fresh output path for each benchmark.
+
+```bash
+python -m scripts.sanitizer_workload pytest
+python -m scripts.benchmark_gemm --methods pytorch cublas naive tiled tuned --shapes 16x4096x4096 --output results/new-gemm.json
+```
 
 ## Implementation
 
-| Component | Source |
-|---|---|
-| Python entry points | [gpu_ops/ops.py](gpu_ops/ops.py) |
-| Extension loader | [gpu_ops/extension.py](gpu_ops/extension.py) |
-| Pybind interface | [csrc/bindings.cpp](csrc/bindings.cpp) |
-| CUDA kernels and launch wrappers | [csrc/kernels.cu](csrc/kernels.cu) |
-| Fixed-width caching and vector layouts | [csrc/rmsnorm_specialized.cu](csrc/rmsnorm_specialized.cu) |
-| GEMM kernels and direct cuBLAS control | [csrc/gemm.cu](csrc/gemm.cu) |
-| GEMM reference and precision controls | [reference/gemm.py](reference/gemm.py) |
-| LayerNorm kernels | [csrc/layernorm.cu](csrc/layernorm.cu) |
-| LayerNorm reference and native control | [reference/layernorm.py](reference/layernorm.py) |
-| RMSNorm reference | [reference/rmsnorm.py](reference/rmsnorm.py) |
+I implemented the baseline and optimized CUDA kernels, the guarded shape and alignment dispatch, and the PyTorch extension interface. I built the benchmark and validation tooling, evaluated candidate layouts on L4, and checked numerical behavior, stream ordering, CUDA Graph execution, and sanitizer results.
 
-All RMSNorm variants use FP32 reduction and Qwen2-compatible cast order. The width-1536 vector path uses 128 threads per row; other widths keep the general warp fallback. It supports contiguous two-dimensional FP32, FP16 and BF16 tensors. [Development workflow](docs/DEVELOPMENT.md).
+The exercise provided the operator targets and tiling examples. The implementations preserve Qwen2-compatible RMSNorm cast order, validate vector-access alignment, and retain fallback paths for misaligned storage and general widths. All operators implement forward execution. PyTorch and cuBLAS provide comparison implementations, with SIMT FP32 arithmetic in the custom GEMM.
+
+## Results and source
+
+The final confirmation measurements for all three operators are collected in [measurements.json](results/measurements.json). The CUDA kernels are in [csrc](csrc), the public Python interface is in [gpu_ops](gpu_ops), and baseline implementations are in [reference](reference).
+
+## Validation and measurement
+
+The recorded final L4 pytest run reports **1,330 passed**, also passing memcheck with zero errors. Separate numerical sweeps check **924 RMSNorm**, **720 LayerNorm**, and **768 GEMM** parameter combinations; these are separate workloads and are not added to the pytest total. GEMM synccheck and racecheck each cover 192 cases with zero errors/hazards.
+
+Fresh-process confirmation follows candidate selection. Measurements use 30 randomized interleaved repeats, with 100 calls per replay for normalization and 20 for GEMM. CUDA Graph replay measures GPU execution with captured launches, excluding compilation and Python dispatch. Separate synchronized ordinary-call timings include host dispatch, launch overhead, and allocation. Fixed inputs are reused across repeats. Kernel/source hashes and per-repeat samples are retained in the confirmation dataset. Hardware-counter profiling was blocked by device permissions; design decisions use timing controls, launch topology, and static binary inspection.
+
+## References
+
+The workload exercises define the operator targets and supply tiling examples ([normalization and GEMM](https://dcn5i64sv9ln.feishu.cn/docx/WinMdFbVEobaxbx31VKc5ydOn0b), [small-K GEMM](https://dcn5i64sv9ln.feishu.cn/docx/LPHQdG01Ro3uRwxjrIDcUF5Zntb)). Implementation references include the [PyTorch extension loader](https://docs.pytorch.org/docs/stable/cpp_extension.html), [CUDA stream semantics](https://docs.pytorch.org/docs/stable/notes/cuda.html#cuda-streams), and [Qwen2 RMSNorm](https://github.com/huggingface/transformers/blob/v4.57.1/src/transformers/models/qwen2/modeling_qwen2.py).

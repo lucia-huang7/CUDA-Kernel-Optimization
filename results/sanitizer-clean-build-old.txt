@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-CLEAN_BUILD_PASSED
-========= ERROR SUMMARY: 0 errors

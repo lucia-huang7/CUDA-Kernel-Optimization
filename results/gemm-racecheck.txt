@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-PASS: 192 GEMM sanitizer cases; all candidates, tile tails, alignment and empty dimensions.
-========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)

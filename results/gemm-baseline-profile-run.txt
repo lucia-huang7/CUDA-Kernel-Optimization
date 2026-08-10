@@ -1,4 +1,0 @@
-pytorch 2.0 CUDA events/call
-cublas 2.0 CUDA events/call
-naive 1.0 CUDA events/call
-{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_naive_kernelEPKfS1_Pfiii', 'barrier_sites': 0, 'ffma_sites': 29, 'shared_instruction_sites': 0, 'local_memory_sites': 0}
