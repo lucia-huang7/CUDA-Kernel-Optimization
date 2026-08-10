@@ -1,0 +1,30 @@
+{
+  "source_hashes": {
+    "csrc/gemm.cu": "a3d14d32f9be6e72dab2d53500088ce61c471c553651ce37e9b5519b42368fd1",
+    "csrc/bindings.cpp": "ae8907cf61efadee7091aefd87c31684ad0e150c0c77dcf1d096557c795cea05",
+    "gpu_ops/extension.py": "b5f73c4fabfc9f9425c0f2b5828b066fbcf7cedfc50ecc09876ecece2c0448a8",
+    "gpu_ops/ops.py": "c8892b8b201ee463b3cd4531c2bbe5e1de0a3d5ad0453c96e1d556b5bba0ed40",
+    "gpu_ops/__init__.py": "bfa8db151783fce2356eee06feb9b351898683af56b0ace779c46036d2365419",
+    "reference/gemm.py": "4419bc6eb5ea21c94e60b20286f95bf8cf8761ecc5de9a288780cee4281da377",
+    "tests/test_gemm.py": "314cefa2dc0ed6f01e3d69cc84a255d40b4f8a30483b2ad014b97298a384b2d1",
+    "scripts/benchmark_gemm.py": "60df8aff0bc1513246663269b0924c57e79a9f8fbda53120d6fc5ca22d4c7b46",
+    "scripts/profile_gemm.py": "cafcda050590d1fe40d46bfece4b011b284a0c081ba7a4af755fc2eb7802595d",
+    "scripts/validate_gemm.py": "2af74ab6bc32b06646cfb2741d971970829c2e6ef5f4d51f7583b4e1fa9dd2fd",
+    "scripts/sanitize_gemm.py": "542303cfe6fbd2162e68f4fd32b49ee40b7e3b03d40d77408336251aa0dc4630"
+  },
+  "sanitizer_version": "NVIDIA (R) Compute Sanitizer\nCopyright (c) 2020-2025 NVIDIA Corporation\nVersion 2025.1.0.0 (build 35583870) (public-release)\n",
+  "gpu_sm_count": 58,
+  "binary_sha256": "6810a680303607ef69cddad0ac9104b7c117972891e4b47f9ea8318a26f752f0",
+  "exit_codes": {
+    "tests-gemm-baseline-exit.txt": "0",
+    "gemm-ncu-exit.txt": "1",
+    "tests-gemm-tuning-exit.txt": "0",
+    "tests-gemm-vector-exit.txt": "0",
+    "tests-gemm-split-exit.txt": "0",
+    "tests-gemm-final-exit.txt": "0",
+    "gemm-correctness-exit.txt": "0",
+    "gemm-memcheck-exit.txt": "0",
+    "gemm-synccheck-exit.txt": "0",
+    "gemm-racecheck-exit.txt": "0"
+  }
+}

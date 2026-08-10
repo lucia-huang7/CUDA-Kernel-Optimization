@@ -20,3 +20,6 @@ __all__.append("gemm_vector")
 
 from .ops import gemm_splitk
 __all__.append("gemm_splitk")
+
+from .ops import gemm_tuned
+__all__.append("gemm_tuned")

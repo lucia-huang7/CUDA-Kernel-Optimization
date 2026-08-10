@@ -6,7 +6,7 @@ import gpu_ops
 from reference.gemm import configure_precision,gemm_oracle,tolerance
 
 CUDA=pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA GPU required')
-VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled']+[('gemm_register',i) for i in range(6)]+[('gemm_vector',i) for i in range(3)]+[('gemm_splitk',4),('gemm_splitk',8)]
+VARIANTS=['gemm_naive','gemm_cublas','gemm_tiled','gemm_tuned']+[('gemm_register',i) for i in range(6)]+[('gemm_vector',i) for i in range(3)]+[('gemm_splitk',4),('gemm_splitk',8)]
 
 
 @pytest.fixture(params=VARIANTS)
@@ -118,3 +118,11 @@ def test_splitk_tails(splits,offsets):
     a=torch.randn(19*260+ao,device='cuda')[ao:].reshape(19,260)
     b=torch.randn(260*132+bo,device='cuda')[bo:].reshape(260,132)
     torch.testing.assert_close(gpu_ops.gemm_splitk(a,b,splits),gemm_oracle(a,b),**tolerance(260))
+
+
+@CUDA
+@pytest.mark.parametrize('operation,value',[('gemm_vector',-1),('gemm_vector',3),('gemm_splitk',0),('gemm_splitk',3),('gemm_splitk',16)])
+def test_invalid_variant_parameters(operation,value):
+    a=torch.ones(3,5,device='cuda');b=torch.ones(5,7,device='cuda')
+    key='splits' if operation=='gemm_splitk' else 'config'
+    with pytest.raises(RuntimeError):getattr(gpu_ops,operation)(a,b,**{key:value})

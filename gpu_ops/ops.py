@@ -72,3 +72,7 @@ def gemm_vector(a, b, config=0):
 
 def gemm_splitk(a, b, splits=8):
     return load_extension().gemm_splitk(a, b, splits)
+
+
+def gemm_tuned(a, b):
+    return load_extension().gemm_tuned(a, b)

@@ -302,3 +302,11 @@ at::Tensor gemm_splitk_cuda(const at::Tensor& a,const at::Tensor& b,int64_t spli
   C10_CUDA_KERNEL_LAUNCH_CHECK();
   return c;
 }
+
+at::Tensor gemm_tuned_cuda(const at::Tensor& a,const at::Tensor& b) {
+  if(a.dim()==2 && b.dim()==2 && a.size(0)<=64 && a.size(1)>=256)
+    return gemm_splitk_cuda(a,b,4);
+  if(a.dim()==2 && a.size(0)>=128 && a.size(1)<=64)
+    return gemm_vector_cuda(a,b,1);
+  return gemm_vector_cuda(a,b,2);
+}

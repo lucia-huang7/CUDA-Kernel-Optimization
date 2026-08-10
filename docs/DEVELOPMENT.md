@@ -101,3 +101,24 @@ compute-sanitizer --tool racecheck --error-exitcode 99 python -c "from gpu_ops i
 Use fresh paths. Keep at most six static row shapes per compiled-reference process; run other widths/dtypes in separate processes. Graph replay excludes Python dispatch; the same runner also records ordinary call wall times. The FP64 oracle executes on the CPU, separating the expected calculation from the CUDA kernels under test. The original GPU FP64 mean Racecheck report and PyTorch-only reproducer remain in the evidence.
 
 [LayerNorm experiment and results](../results/layernorm.md). Plotting follows the established DejaVu Sans axes/legend and Times New Roman caption style.
+
+
+## FP32 GEMM
+
+The row-major API computes C=A@B for contiguous FP32 matrices. `gemm_naive`, `gemm_tiled`, `gemm_register(config=0..5)`, `gemm_vector(config=0..2)` and `gemm_splitk(splits=1/2/4/8)` retain the development stages. `gemm_tuned` applies the measured shape-regime dispatch. Vector paths require N/K divisible by four and 16-byte input-pointer alignment; other inputs use a scalar register fallback. Split-K is guarded to M≤64 and K≥256. Empty outputs and K=0 are handled explicitly; all entry points validate dimensions/device/dtype/layout/autograd requirements.
+
+`gemm_cublas` directly invokes cublasGemmEx with pedantic FP32 compute and restores pointer mode. PyTorch comparison scripts explicitly select highest float32 precision and disable TF32. GEMM kernels call fmaf explicitly; the extension-wide compiler flags used by normalization are preserved. All operators execute on the current PyTorch stream. Split-K workspace lifetime follows the stream-ordered caching allocator and is covered by stream/graph tests.
+
+```bash
+python -m scripts.validate_gemm --output results/new-gemm-correctness.json
+python -m scripts.benchmark_gemm --methods pytorch cublas naive tiled tuned --output results/new-gemm-comparison.json
+python -m scripts.benchmark_gemm --methods pytorch cublas naive tiled tuned --shapes 32x2048x1024 --output results/new-gemm-shape.json
+python -m scripts.profile_gemm --prefix results/new-gemm-profile
+compute-sanitizer --tool memcheck --report-api-errors all --error-exitcode 99 python -m scripts.sanitizer_workload pytest
+compute-sanitizer --tool synccheck --error-exitcode 99 python -m scripts.sanitize_gemm
+compute-sanitizer --tool racecheck --error-exitcode 99 python -m scripts.sanitize_gemm
+```
+
+Use fresh output paths. The benchmark saves interleaved graph timings and separate synchronized ordinary-call wall times; 20 calls per capture keep large-output runs within the L4 memory budget. The CPU FP64 oracle is independent of the CUDA candidate under test. Historical tuning files correspond to distinct Git source revisions, recorded in the report. Plotting uses `scripts/plot_gemm.py` and the established figure font/color settings.
+
+[GEMM experiment and results](../results/gemm.md).

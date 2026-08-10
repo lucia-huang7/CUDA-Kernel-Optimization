@@ -1,0 +1,99 @@
+{
+  "shape": [
+    16,
+    4096,
+    4096
+  ],
+  "topology": {
+    "pytorch": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 284.8620000000001
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.096999999999753
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 276.0949999999998
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 3.8390000000003965
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 275.6470000000004
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 3.8079999999999927
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "cublas": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 276.79800000000023
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.128000000000156
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 276.41399999999976
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.128000000000156
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 275.93399999999974
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.128000000000156
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "naive": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 448.991
+        },
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 449.567
+        },
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 445.951
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    }
+  },
+  "static_kernels": [
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_naive_kernelEPKfS1_Pfiii",
+      "barrier_sites": 0,
+      "ffma_sites": 29,
+      "shared_instruction_sites": 0,
+      "local_memory_sites": 0
+    }
+  ],
+  "source_sha256": "c9fea953c66f7b58ae8618a0211d371de803aa2bd5263bd048e10698a4d8d60f",
+  "binary_sha256": "3c1a11b24179a0d46b7f2a4574389f7ca4505d6c8957da22a949b4397484c0d9",
+  "interpretation": "Launch topology and static instruction sites, not measured bandwidth or stalls"
+}

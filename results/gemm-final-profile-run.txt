@@ -1,0 +1,29 @@
+pytorch 2.0 CUDA events/call
+cublas 2.0 CUDA events/call
+naive 1.0 CUDA events/call
+tiled 1.0 CUDA events/call
+reg64x64 1.0 CUDA events/call
+reg32x64 1.0 CUDA events/call
+reg16x64 1.0 CUDA events/call
+reg16x128 1.0 CUDA events/call
+reg32x128 1.0 CUDA events/call
+reg64x128 1.0 CUDA events/call
+vec64x128 1.0 CUDA events/call
+vec32x128 1.0 CUDA events/call
+vec16x64 1.0 CUDA events/call
+split4 2.0 CUDA events/call
+split8 2.0 CUDA events/call
+tuned 2.0 CUDA events/call
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi16ELi64ELi2ELb0EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 256, 'shared_instruction_sites': 131, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi32ELi128ELi4ELb0EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 512, 'shared_instruction_sites': 195, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi64ELi128ELi4ELb0EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 512, 'shared_instruction_sites': 195, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi64ELi128ELi32ELi4ELi4EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 512, 'shared_instruction_sites': 270, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi32ELi128ELi32ELi4ELi4EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 512, 'shared_instruction_sites': 270, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi16ELi128ELi32ELi2ELi8EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 512, 'shared_instruction_sites': 334, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi16ELi64ELi32ELi2ELi4EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 256, 'shared_instruction_sites': 206, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi32ELi64ELi16ELi2ELi4EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 128, 'shared_instruction_sites': 110, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi64ELi64ELi16ELi4ELi4EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 256, 'shared_instruction_sites': 142, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi16ELi64ELi2ELb1EEEvPKfS2_Pfiii', 'barrier_sites': 2, 'ffma_sites': 256, 'shared_instruction_sites': 131, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a524gemm_split_reduce_kernelEPKfPfli', 'barrier_sites': 0, 'ffma_sites': 0, 'shared_instruction_sites': 0, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_tiled_kernelEPKfS1_Pfiii', 'barrier_sites': 2, 'ffma_sites': 16, 'shared_instruction_sites': 22, 'local_memory_sites': 0}
+{'name': '_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_naive_kernelEPKfS1_Pfiii', 'barrier_sites': 0, 'ffma_sites': 29, 'shared_instruction_sites': 0, 'local_memory_sites': 0}

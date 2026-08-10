@@ -8,16 +8,32 @@ CUDA C++ operator development with PyTorch bindings, numerical tests and hardwar
 
 | Check | Result |
 |---|---:|
-| CUDA extension compile and first load | 17.49 s |
+| Initial extension build and first load | 17.49 s |
 | Python-to-CUDA smoke cases | 18 passed |
-| Correctness and execution-semantics tests, seven variants | 480 passed |
+| RMSNorm correctness and execution semantics, seven variants | 480 passed |
 | Separate RMSNorm numerical cases, seven variants | 924 passed |
-| Full test suite, RMSNorm and LayerNorm | 791 passed |
+| Full test suite, RMSNorm / LayerNorm / GEMM | 1330 passed |
 | LayerNorm numerical cases, four variants | 720 passed |
-| Compute Sanitizer memcheck with startup loading | 791 tests; 0 errors |
+| GEMM numerical cases, all candidates and controls | 768 passed |
+| GEMM synchronization / race checks | 192 cases each; 0 errors / hazards |
+| Compute Sanitizer memcheck with startup loading | 1330 tests; 0 errors |
 | RMSNorm alignment and row tails: memcheck / synccheck / racecheck | 60 cases each; 0 errors / hazards |
 
 [Validation results](results/validation.md) · [Current numerical evidence](results/rmsnorm-specialized-final-correctness.json) · [Sanitizer diagnosis](results/sanitizer-diagnosis.md)
+
+## FP32 GEMM optimization
+
+Shared-memory tiling, register blocking and vectorized tile access reduce repeated loads and retain multiple output accumulators per thread. A guarded split-K path increases parallelism for small-M, long-K matrices. Independent L4 confirmation shows **2.34×** and **3.79×** speedups over the CUDA baseline on the two rectangular target shapes, alongside PyTorch and direct cuBLAS comparisons with TF32 disabled.
+
+![GEMM performance](assets/figures/gemm_v1.png)
+
+| M × N × K | CUDA baseline | Shared tile | Tuned CUDA | PyTorch | cuBLAS |
+|---|---:|---:|---:|---:|---:|
+| 16 × 4096 × 4096 | 617.044 μs | 464.093 μs | 263.518 μs | 281.820 μs | 282.527 μs |
+| 4096 × 4096 × 32 | 1004.693 μs | 791.953 μs | 265.044 μs | 274.468 μs | 271.799 μs |
+| 512 × 512 × 512 | 191.522 μs | 149.533 μs | 68.668 μs | 32.454 μs | 32.423 μs |
+
+FP32, median of 30 interleaved repetitions with 20 calls per replay. All candidate configurations, five additional shapes, ordinary-call timings and resource measurements are in the [full experiment](results/gemm.md).
 
 ## LayerNorm optimization
 
@@ -75,6 +91,8 @@ Median of 30 interleaved repeats, each replaying 100 calls. The chart includes t
 | Pybind interface | [csrc/bindings.cpp](csrc/bindings.cpp) |
 | CUDA kernels and launch wrappers | [csrc/kernels.cu](csrc/kernels.cu) |
 | Fixed-width caching and vector layouts | [csrc/rmsnorm_specialized.cu](csrc/rmsnorm_specialized.cu) |
+| GEMM kernels and direct cuBLAS control | [csrc/gemm.cu](csrc/gemm.cu) |
+| GEMM reference and precision controls | [reference/gemm.py](reference/gemm.py) |
 | LayerNorm kernels | [csrc/layernorm.cu](csrc/layernorm.cu) |
 | LayerNorm reference and native control | [reference/layernorm.py](reference/layernorm.py) |
 | RMSNorm reference | [reference/rmsnorm.py](reference/rmsnorm.py) |

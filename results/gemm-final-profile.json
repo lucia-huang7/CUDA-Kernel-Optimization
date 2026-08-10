@@ -1,0 +1,453 @@
+{
+  "shape": [
+    16,
+    4096,
+    4096
+  ],
+  "topology": {
+    "pytorch": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 283.87200000000007
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.128000000000156
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 275.67999999999984
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 3.8079999999999927
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 275.80700000000024
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.128000000000156
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "cublas": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 276.0
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.127999999999702
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 275.96799999999985
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.096000000000004
+        },
+        {
+          "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(cutlass_80_simt_sgemm_128x32_8x5_nn_align1::Params)",
+          "device_us": 276.19299999999976
+        },
+        {
+          "name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, false, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*, float*, float*, float const*, float const*, float const*, float const*, float const*)",
+          "device_us": 4.063000000000102
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "naive": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 452.57900000000006
+        },
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 451.5229999999999
+        },
+        {
+          "name": "(anonymous namespace)::gemm_naive_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 449.31500000000005
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "tiled": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "(anonymous namespace)::gemm_tiled_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 351.487
+        },
+        {
+          "name": "(anonymous namespace)::gemm_tiled_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 352.4469999999999
+        },
+        {
+          "name": "(anonymous namespace)::gemm_tiled_kernel(float const*, float const*, float*, int, int, int)",
+          "device_us": 351.3600000000001
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg64x64": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 64, 16, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 819.419
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 64, 16, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 820.3480000000002
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 64, 16, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 825.0190000000002
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg32x64": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 64, 16, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 638.716
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 64, 16, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 652.8600000000001
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 64, 16, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 645.8510000000001
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg16x64": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 64, 32, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 651.0029999999999
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 64, 32, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 655.8990000000001
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 64, 32, 2, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 653.7550000000001
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg16x128": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 128, 32, 2, 8>(float const*, float const*, float*, int, int, int)",
+          "device_us": 1053.981
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 128, 32, 2, 8>(float const*, float const*, float*, int, int, int)",
+          "device_us": 1053.7250000000001
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<16, 128, 32, 2, 8>(float const*, float const*, float*, int, int, int)",
+          "device_us": 1051.5169999999998
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg32x128": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 752.022
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 753.623
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<32, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 750.614
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "reg64x128": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 869.458
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 862.385
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_register_kernel<64, 128, 32, 4, 4>(float const*, float const*, float*, int, int, int)",
+          "device_us": 868.8180000000002
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "vec64x128": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<64, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 534.459
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<64, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 533.1469999999999
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<64, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 591.386
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "vec32x128": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<32, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 364.99
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<32, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 365.79100000000017
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<32, 128, 4, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 366.0459999999998
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "vec16x64": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 404.192
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 411.10300000000007
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, false>(float const*, float const*, float*, int, int, int)",
+          "device_us": 399.456
+        }
+      ],
+      "cuda_events_per_call": 1.0
+    },
+    "split4": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 262.712
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.112000000000023
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 261.496
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.335999999999899
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 262.3929999999999
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.3039999999999736
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "split8": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 282.75
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.5920000000000414
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 283.58200000000005
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.816000000000031
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 283.6139999999999
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.8480000000001837
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    },
+    "tuned": {
+      "calls": 3,
+      "events": [
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 262.78099999999995
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.1440000000000055
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 262.4599999999999
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.2719999999999345
+        },
+        {
+          "name": "void (anonymous namespace)::gemm_vector_kernel<16, 64, 2, true>(float const*, float const*, float*, int, int, int)",
+          "device_us": 262.0450000000001
+        },
+        {
+          "name": "(anonymous namespace)::gemm_split_reduce_kernel(float const*, float*, long, int)",
+          "device_us": 2.2730000000000246
+        }
+      ],
+      "cuda_events_per_call": 2.0
+    }
+  },
+  "static_kernels": [
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi16ELi64ELi2ELb0EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 256,
+      "shared_instruction_sites": 131,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi32ELi128ELi4ELb0EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 512,
+      "shared_instruction_sites": 195,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi64ELi128ELi4ELb0EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 512,
+      "shared_instruction_sites": 195,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi64ELi128ELi32ELi4ELi4EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 512,
+      "shared_instruction_sites": 270,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi32ELi128ELi32ELi4ELi4EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 512,
+      "shared_instruction_sites": 270,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi16ELi128ELi32ELi2ELi8EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 512,
+      "shared_instruction_sites": 334,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi16ELi64ELi32ELi2ELi4EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 256,
+      "shared_instruction_sites": 206,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi32ELi64ELi16ELi2ELi4EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 128,
+      "shared_instruction_sites": 110,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a520gemm_register_kernelILi64ELi64ELi16ELi4ELi4EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 256,
+      "shared_instruction_sites": 142,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a518gemm_vector_kernelILi16ELi64ELi2ELb1EEEvPKfS2_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 256,
+      "shared_instruction_sites": 131,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a524gemm_split_reduce_kernelEPKfPfli",
+      "barrier_sites": 0,
+      "ffma_sites": 0,
+      "shared_instruction_sites": 0,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_tiled_kernelEPKfS1_Pfiii",
+      "barrier_sites": 2,
+      "ffma_sites": 16,
+      "shared_instruction_sites": 22,
+      "local_memory_sites": 0
+    },
+    {
+      "name": "_ZN39_GLOBAL__N__0d6b2c88_7_gemm_cu_8b9d02a517gemm_naive_kernelEPKfS1_Pfiii",
+      "barrier_sites": 0,
+      "ffma_sites": 29,
+      "shared_instruction_sites": 0,
+      "local_memory_sites": 0
+    }
+  ],
+  "source_sha256": "a3d14d32f9be6e72dab2d53500088ce61c471c553651ce37e9b5519b42368fd1",
+  "binary_sha256": "6810a680303607ef69cddad0ac9104b7c117972891e4b47f9ea8318a26f752f0",
+  "interpretation": "Launch topology and static instruction sites, not measured bandwidth or stalls"
+}

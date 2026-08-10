@@ -28,7 +28,10 @@ at::Tensor gemm_vector_cuda(const at::Tensor&, const at::Tensor&, int64_t);
 
 at::Tensor gemm_splitk_cuda(const at::Tensor&, const at::Tensor&, int64_t);
 
+at::Tensor gemm_tuned_cuda(const at::Tensor&, const at::Tensor&);
+
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+  module.def("gemm_tuned", &gemm_tuned_cuda, "Shape-regime FP32 GEMM dispatch");
   module.def("gemm_splitk", &gemm_splitk_cuda, "Guarded small-M split-K FP32 GEMM",
              pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("splits") = 8);
   module.def("gemm_vector", &gemm_vector_cuda, "Vectorized register-blocked FP32 GEMM",

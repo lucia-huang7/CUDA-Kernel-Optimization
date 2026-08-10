@@ -1,0 +1,5 @@
+8x2048x2048 {'pytorch': 30.237, 'cublas': 30.675, 'naive': 67.146, 'tiled': 100.719, 'tuned': 33.964}
+32x2048x1024 {'pytorch': 19.126, 'cublas': 19.144, 'naive': 110.424, 'tiled': 88.388, 'tuned': 32.459}
+2048x3072x32 {'pytorch': 97.015, 'cublas': 98.619, 'naive': 382.721, 'tiled': 299.919, 'tuned': 97.819}
+1024x2048x64 {'pytorch': 37.432, 'cublas': 37.37, 'naive': 206.117, 'tiled': 159.851, 'tuned': 45.315}
+257x511x129 {'pytorch': 8.246, 'cublas': 8.269, 'naive': 22.359, 'tiled': 20.602, 'tuned': 19.529}
